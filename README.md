@@ -7,6 +7,7 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 - **Data constraint:** training uses **only CIFAR-10 train** (augmentations allowed). No external data or external pretraining.
 - **Reporting:** at least **mean latency** and **p95 latency** for each variant; track accuracy and (optionally) model size / params.
 
+
 ## Repository structure (suggested)
 .
 ├── src/
@@ -24,6 +25,7 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 ├── results/                   # benchmark CSV + summary tables/plots
 ├── checkpoints/               # saved weights (gitignored)
 └── README.md
+
 
 ## Notes / guardrails
 - No ImageNet weights: instantiate models with `weights=None` (or equivalent) and train on CIFAR-10.
