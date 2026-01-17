@@ -10,20 +10,35 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 
 ## Repository structure (suggested)
 .
+
 ├── src/
+
 │   ├── data.py                # CIFAR-10 dataloaders + transforms
+
 │   ├── train.py               # training entrypoint
+
 │   ├── eval.py                # accuracy evaluation on test
+
 │   ├── bench.py               # GPU latency benchmark (batch=1)
+
 │   ├── models/
+
 │   │   ├── resnet18_cifar.py
+
 │   │   └── mobilenetv3_cifar.py
+
 │   └── utils/
+
 │       ├── seed.py            # reproducibility helpers
+
 │       └── logging.py         # save metrics/metadata to CSV
+
 ├── configs/                   # YAML/JSON configs per experiment
+
 ├── results/                   # benchmark CSV + summary tables/plots
+
 ├── checkpoints/               # saved weights (gitignored)
+
 └── README.md
 
 
