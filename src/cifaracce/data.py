@@ -9,6 +9,26 @@ from time import perf_counter
 from datetime import datetime
 from pathlib import Path
 
+# ========================================================================
+# DATA PREPARATION MODULE
+# ========================================================================
+# 
+# What does this file do?
+# Downloads and prepares CIFAR-10 images for model usage.
+#
+# Step by step:
+# 1. Downloads CIFAR-10 dataset (60,000 images from 10 classes: 
+#    airplane, car, bird, cat, deer, dog, frog, horse, ship, truck)
+# 2. Transforms images:
+#    - For training: flips, rotates, crops (data augmentation)
+#    - For testing: only normalizes values
+# 3. Creates DataLoaders that deliver images in batches:
+#    - Train: 128 images at a time
+#    - Test: 1 image at a time (to measure individual latency)
+#
+# Result: You have train_loader and test_loader ready to use.
+# ========================================================================
+
 # ------------------------------------------- #
 # CIFAR-10 Preparation and Transformations
 # ------------------------------------------- #

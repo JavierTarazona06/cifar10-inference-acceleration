@@ -9,6 +9,23 @@ from time import perf_counter
 from datetime import datetime
 from pathlib import Path
 
+# ========================================================================
+# BENCHMARK LATENCY MODULE
+# ========================================================================
+# 
+# What does this file do?
+# Measures how long the model takes to process one image (GPU latency).
+#
+# Step by step:
+# 1. Preloads images on GPU (to avoid measuring CPU→GPU transfers)
+# 2. Warm-up: Runs the model 50 times without measuring (heats up GPU)
+# 3. Measurement: Runs 500 times timing each inference with precision
+# 4. Calculates statistics: mean, P95, standard deviation, min, max
+# 5. Saves results to CSV
+#
+# Key function: benchmark_latency() gives you precise inference times.
+# ========================================================================
+
 WARM_UP_ITERS = 50
 MEASURE_ITERS = 500
 

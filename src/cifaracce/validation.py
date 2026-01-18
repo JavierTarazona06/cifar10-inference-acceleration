@@ -9,6 +9,29 @@ from pathlib import Path
 from cifaracce.data import BATCH_SIZE_TEST, test_loader
 from cifaracce.bench import WARM_UP_ITERS, MEASURE_ITERS, benchmark_latency, example_usage
 
+# ========================================================================
+# VALIDATION AND REPRODUCIBILITY MODULE
+# ========================================================================
+# 
+# What does this file do?
+# Documents benchmark conditions and verifies that measurements are stable.
+#
+# Step by step:
+# 1. Documents the environment:
+#    - PyTorch, CUDA versions
+#    - GPU used, configurations
+#    - Saves everything to benchmark_conditions.json
+# 2. Runs 3 consecutive benchmarks of the same model
+# 3. Validates stability:
+#    - Calculates the coefficient of variation (CV) between the 3 runs
+#    - If CV < 20%: ✓ Reliable measurements
+#    - If CV ≥ 20%: ⚠️ Noise/instability present
+# 4. Shows summary with results and statistics
+#
+# Objective: Ensure your measurements are reproducible and not affected
+#            by random noise.
+# ========================================================================
+
 # -----------------------------
 # Conditions for reproducing
 # -----------------------------
