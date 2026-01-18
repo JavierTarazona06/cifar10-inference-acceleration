@@ -51,7 +51,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
   - **Priorité** : 🟡 Moyenne
 
 - [ ] **J2-06** | Lancer l'entraînement du modèle léger
-  - **Description** : Entraîner MobileNetV3-Small ou ShuffleNetV2 sur CIFAR-10 train
+  - **Description** : Entraîner MobileNetV3-Small sur CIFAR-10 train
   - **Critère de succès** : Atteindre ≥80%, viser ≥85%
   - **Labels** : `entraînement`, `exécution`
   - **Priorité** : 🔴 Haute
