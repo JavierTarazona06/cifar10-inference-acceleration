@@ -1,0 +1,192 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\geometry{margin=2.3cm}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+
+\title{Planning de travail (5 jours)\\Accélération de l'inférence sur CIFAR-10 (latence GPU)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Objectif du sprint (5 jours)}
+\textbf{But :} obtenir un modèle CIFAR-10 atteignant \textbf{$\geq 85\%$} d'accuracy sur test et minimisant la \textbf{latence GPU en batch = 1}, avec une démarche incrémentale et des mesures reproductibles.
+
+\section{Principes de mesure (à figer dès J1)}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Métrique principale :} latence GPU (batch=1).
+  \item \textbf{Protocole :} \textit{warm-up} (50--200 itérations) + mesure (500--2000 itérations).
+  \item \textbf{Synchronisation :} \texttt{torch.cuda.synchronize()} ou événements CUDA pour des temps corrects.
+  \item \textbf{Rapports :} moyenne + p95 (95e percentile). Optionnel : p50, écart-type.
+  \item \textbf{Conditions fixes :} même GPU, même prétraitement, même précision numérique (FP32/FP16), \texttt{model.eval()} et \texttt{torch.no\_grad()}.
+\end{itemize}
+
+\section{Itérations prévues (vue d'ensemble)}
+Chaque itération produit une \textbf{mesure} (accuracy + latence) et une \textbf{décision} (on garde / on abandonne / on affine).
+
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}lXl@{}}
+\toprule
+\textbf{Itération} & \textbf{Contenu} & \textbf{Sortie attendue} \\
+\midrule
+I0 & Mise en place (data + code + benchmark) & Benchmark de latence validé \\
+I1 & Baseline \textit{vitesse} : MobileNetV3/ShuffleNet entraîné from-scratch & 1er modèle \textbf{rapide} + mesures \\
+I2 & Baseline \textit{précision} : ResNet-18 CIFAR (teacher) from-scratch & Modèle \textbf{robuste} ($\geq 85\%$) + mesures \\
+I3 & Optimisations GPU (FP16, \texttt{compile}, \texttt{channels\_last}) & Gains mesurés sur latence \\
+I4 & Distillation (si nécessaire) teacher$\rightarrow$student & Student $\geq 85\%$ + latence meilleure \\
+I5 & Consolidation : tableau final + reproductibilité + rapport & Livrables finalisés \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Planning détaillé sur 5 jours}
+
+\subsection*{Jour 1 (J1) --- Démarrage + Itération I0}
+\textbf{Objectif :} disposer d'un environnement propre et d'un benchmark de latence GPU fiable.
+\begin{itemize}[leftmargin=*]
+  \item Installer / vérifier versions : PyTorch, torchvision, CUDA, drivers, \texttt{torch.compile} (si dispo).
+  \item Charger CIFAR-10 et définir transforms (normalisation, augmentations \textit{train}).
+  \item \textbf{Implémenter le benchmark latence} (batch=1) :
+    \begin{itemize}
+      \item entrée déjà sur GPU (pas de transfert dans la boucle),
+      \item \textit{warm-up} + mesure,
+      \item moyenne + p95,
+      \item sauvegarde dans un CSV.
+    \end{itemize}
+  \item Vérifier la stabilité : répéter 3 runs (variance raisonnable).
+\end{itemize}
+
+\textbf{Critères d'acceptation J1 :}
+\begin{itemize}[leftmargin=*]
+  \item Un script de benchmark qui produit : moyenne, p95, et un fichier de résultats.
+  \item Un protocole documenté (dans un README ou cellule notebook).
+\end{itemize}
+
+\subsection*{Jour 2 (J2) --- Baseline vitesse + Itération I1}
+\textbf{Objectif :} entraîner un modèle léger from-scratch et mesurer sa latence.
+\begin{itemize}[leftmargin=*]
+  \item Adapter le notebook de départ :
+    \begin{itemize}
+      \item \textbf{\texttt{weights=None}} (pas d'ImageNet),
+      \item tête de sortie en \textbf{10 classes},
+      \item gestion propre du \texttt{device}.
+    \end{itemize}
+  \item Entraîner \textbf{MobileNetV3-Small} \textbf{ou} \textbf{ShuffleNetV2} :
+    \begin{itemize}
+      \item objectif : monter rapidement vers $\geq 80\%$ puis viser $\geq 85\%$,
+      \item sauvegarder checkpoints et logs (accuracy train/test).
+    \end{itemize}
+  \item Mesurer latence (FP32) avec le benchmark J1.
+\end{itemize}
+
+\textbf{Sorties J2 :}
+\begin{itemize}[leftmargin=*]
+  \item Résultats (accuracy, latence moyenne, p95) pour \textbf{au moins un modèle léger}.
+  \item Première ligne du tableau comparatif.
+\end{itemize}
+
+\subsection*{Jour 3 (J3) --- Baseline précision (teacher) + Itération I2}
+\textbf{Objectif :} obtenir une référence robuste $\geq 85\%$ et disposer d'un teacher.
+\begin{itemize}[leftmargin=*]
+  \item Implémenter/entraîner \textbf{ResNet-18 adaptée CIFAR-10} from-scratch.
+  \item Ajuster l'entraînement si nécessaire : LR schedule, augmentations, régularisation.
+  \item Évaluer sur test et mesurer latence (FP32) avec le benchmark.
+  \item Documenter les hyperparamètres (pour la reproductibilité).
+\end{itemize}
+
+\textbf{Critères d'acceptation J3 :}
+\begin{itemize}[leftmargin=*]
+  \item ResNet-18 atteint \textbf{$\geq 85\%$} sur test.
+  \item Mesures latence ajoutées au tableau comparatif.
+\end{itemize}
+
+\subsection*{Jour 4 (J4) --- Optimisations GPU + Itération I3 (et I4 si besoin)}
+\textbf{Objectif :} réduire la latence sans dégrader la précision en dessous de 85\%.
+\begin{enumerate}[leftmargin=*, label=\textbf{I3.\arabic*.}]
+  \item \textbf{FP16 en inférence} (autocast) :
+    \begin{itemize}
+      \item mesurer latence (moyenne + p95),
+      \item vérifier que l'accuracy ne chute pas significativement.
+    \end{itemize}
+  \item \textbf{\texttt{torch.compile}} (si stable) :
+    \begin{itemize}
+      \item comparer latence avant/après,
+      \item noter le temps de compilation (hors métrique de latence).
+    \end{itemize}
+  \item \textbf{\texttt{channels\_last}} :
+    \begin{itemize}
+      \item tester sur modèle léger et ResNet,
+      \item garder uniquement si amélioration mesurable.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Itération I4 (optionnelle, si le modèle léger n'atteint pas 85\%) : Distillation}
+\begin{itemize}[leftmargin=*]
+  \item Teacher : ResNet-18 (J3), Student : MobileNet/ShuffleNet (J2).
+  \item Ajouter une perte de distillation (KL sur logits + CE).
+  \item But : \textbf{Student $\geq 85\%$} avec latence la plus faible.
+\end{itemize}
+
+\textbf{Sorties J4 :}
+\begin{itemize}[leftmargin=*]
+  \item Tableau mis à jour : FP32 vs FP16 vs compile vs channels\_last.
+  \item Décision : \textbf{candidat final} (meilleur compromis accuracy/latence).
+\end{itemize}
+
+\subsection*{Jour 5 (J5) --- Consolidation + Itération I5}
+\textbf{Objectif :} finaliser livrables, reproductibilité et narration de la démarche.
+\begin{itemize}[leftmargin=*]
+  \item Nettoyer le code : scripts séparés (\texttt{train.py}, \texttt{eval.py}, \texttt{bench.py}) ou notebooks structurés.
+  \item Figement des configs : seeds, versions, hyperparamètres, chemin des checkpoints.
+  \item Refaire une \textbf{mesure finale} (3 runs) pour le candidat final et le baseline.
+  \item Construire le \textbf{tableau final} et la \textbf{courte analyse} :
+    \begin{itemize}
+      \item ce qui a été tenté,
+      \item ce qui a marché / pas marché,
+      \item justification du choix final.
+    \end{itemize}
+  \item Préparer le rapport : méthode incrémentale (baseline $\rightarrow$ optimisation $\rightarrow$ mesures).
+\end{itemize}
+
+\textbf{Critères d'acceptation J5 :}
+\begin{itemize}[leftmargin=*]
+  \item Livrables prêts : code + rapport + résultats (CSV) + modèle final.
+  \item Le modèle final respecte \textbf{$\geq 85\%$} et présente la \textbf{meilleure latence} parmi les variantes conservées.
+\end{itemize}
+
+\section{Gestion des risques (très court)}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{R1 :} modèle léger $< 85\%$ $\Rightarrow$ distillation (I4) + tuning léger (augmentations/LR schedule).
+  \item \textbf{R2 :} benchmark instable $\Rightarrow$ augmenter itérations, isoler transferts, synchroniser correctement.
+  \item \textbf{R3 :} \texttt{torch.compile} instable $\Rightarrow$ fallback FP16 + baseline FP32 + export TorchScript (optionnel).
+\end{itemize}
+
+\section{Tableau de résultats (à compléter)}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}lXrrrr@{}}
+\toprule
+\textbf{ID} & \textbf{Variante} & \textbf{Acc. (\%)} & \textbf{Lat. moy. (ms)} & \textbf{Lat. p95 (ms)} & \textbf{Taille (MB)} \\
+\midrule
+B1 & MobileNetV3/ShuffleNet (FP32) &  &  &  &  \\
+B2 & ResNet-18 CIFAR (FP32) &  &  &  &  \\
+O1 & B1 + FP16 &  &  &  &  \\
+O2 & B1 + FP16 + \texttt{compile} &  &  &  &  \\
+O3 & B1 + channels\_last &  &  &  &  \\
+D1 & Distillation student (FP16) &  &  &  &  \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\end{document}
