@@ -9,12 +9,12 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
 
 ### 🔧 Configuration du modèle léger
 
-- [ ] **J2-01** | Choisir l'architecture légère
+- [X] **J2-01** | Choisir l'architecture légère
   - **Description** : Sélectionner entre MobileNetV3-Small et ShuffleNetV2 pour le baseline vitesse
   - **Labels** : `architecture`, `décision`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-02** | Adapter le modèle pour CIFAR-10
+- [X] **J2-02** | Adapter le modèle pour CIFAR-10
   - **Description** : 
     - Instancier avec `weights=None` (pas de poids ImageNet)
     - Modifier la tête de sortie pour **10 classes**
@@ -22,7 +22,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
   - **Labels** : `code`, `modèle`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-03** | Configurer la gestion du device
+- [X] **J2-03** | Configurer la gestion du device
   - **Description** : Assurer le transfert propre du modèle et des données sur GPU
   - **Labels** : `code`, `GPU`
   - **Priorité** : 🟡 Moyenne
@@ -31,7 +31,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
 
 ### 🏋️ Entraînement
 
-- [ ] **J2-04** | Définir les hyperparamètres d'entraînement
+- [X] **J2-04** | Définir les hyperparamètres d'entraînement
   - **Description** :
     - Learning rate initial
     - Scheduler (CosineAnnealing, StepLR, etc.)
@@ -41,7 +41,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
   - **Labels** : `hyperparamètres`, `configuration`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-05** | Configurer les augmentations de données
+- [X] **J2-05** | Configurer les augmentations de données
   - **Description** :
     - RandomCrop avec padding
     - RandomHorizontalFlip
@@ -50,13 +50,13 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
   - **Labels** : `data`, `augmentation`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J2-06** | Lancer l'entraînement du modèle léger
+- [X] **J2-06** | Lancer l'entraînement du modèle léger
   - **Description** : Entraîner MobileNetV3-Small sur CIFAR-10 train
   - **Critère de succès** : Atteindre ≥80%, viser ≥85%
   - **Labels** : `entraînement`, `exécution`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-07** | Sauvegarder les checkpoints
+- [X] **J2-07** | Sauvegarder les checkpoints
   - **Description** :
     - Sauvegarder le meilleur modèle (best accuracy)
     - Sauvegarder le dernier modèle

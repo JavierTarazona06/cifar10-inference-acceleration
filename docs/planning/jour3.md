@@ -9,7 +9,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
 
 ### 🏗️ Architecture ResNet-18 adaptée CIFAR
 
-- [ ] **J3-01** | Implémenter ResNet-18 adaptée CIFAR-10
+- [X] **J3-01** | Implémenter ResNet-18 adaptée CIFAR-10
   - **Description** :
     - Modifier la première couche conv : kernel 3×3, stride 1, padding 1 (au lieu de 7×7)
     - Supprimer le MaxPool initial (images 32×32 trop petites)
