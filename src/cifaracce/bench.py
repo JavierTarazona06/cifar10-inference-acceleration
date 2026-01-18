@@ -30,6 +30,13 @@ WARM_UP_ITERS = 50
 MEASURE_ITERS = 500
 
 # ------------------------------- #
+# Benchmark Accuracy
+# ------------------------------- #
+
+def benchmark_accuracy(model, dataloader, device='cuda'):
+  return model.evaluate(dataloader, device)
+
+# ------------------------------- #
 # Benchmark Latency
 # ------------------------------- #
 
