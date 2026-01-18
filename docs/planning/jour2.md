@@ -46,7 +46,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
     - RandomCrop avec padding
     - RandomHorizontalFlip
     - Normalisation CIFAR-10
-    - (Optionnel) Cutout, AutoAugment
+    - (Optionnel) Cutout, AutoAugment. They can help, not yet impelmented
   - **Labels** : `data`, `augmentation`
   - **Priorité** : 🟡 Moyenne
 

@@ -10,6 +10,7 @@ Hyperparams fijados (J2-04):
 """
 
 import sys
+import csv
 import torch
 from datetime import datetime
 from pathlib import Path
@@ -49,6 +50,15 @@ def main():
     checkpoints_dir = Path('checkpoints/mobilenetv3')
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
 
+    # CSV logging
+    log_path = Path('results_j2_mobilenet_training.csv')
+    with log_path.open('w', newline='') as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=['epoch', 'train_loss', 'train_acc', 'test_acc', 'lr', 'timestamp']
+        )
+        writer.writeheader()
+
     for epoch in range(1, num_epochs + 1):
         # Train
         model.train()
@@ -87,6 +97,21 @@ def main():
         print(f"Epoch {epoch:02d}/{num_epochs} | "
               f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:6.2f}% | "
               f"Test Acc: {test_acc:6.2f}% | LR: {scheduler.get_last_lr()[0]:.5f}")
+
+        # Log CSV
+        with log_path.open('a', newline='') as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=['epoch', 'train_loss', 'train_acc', 'test_acc', 'lr', 'timestamp']
+            )
+            writer.writerow({
+                'epoch': epoch,
+                'train_loss': train_loss,
+                'train_acc': train_acc,
+                'test_acc': test_acc,
+                'lr': scheduler.get_last_lr()[0],
+                'timestamp': datetime.now().isoformat()
+            })
 
         # Checkpoint best
         if test_acc > best_acc:
