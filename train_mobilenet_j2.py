@@ -37,7 +37,7 @@ def main():
 
     # Hyperparams
     optimizer = torch.optim.SGD(
-        model.parameters(), lr=0.1, momentum=0.9, weight_decay=5e-4
+        model.parameters(), lr=0.12, momentum=0.9, weight_decay=5e-4
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=num_epochs
