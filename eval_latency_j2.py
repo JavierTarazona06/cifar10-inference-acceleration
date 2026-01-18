@@ -18,32 +18,27 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # Load trained model
-model = MobileNetV3Small(
-    num_classes=10,
-    learning_rate=0.1,
-    momentum=0.9,
-    weight_decay=5e-4
-)
+model = MobileNetV3Small(num_classes=10)
 
 checkpoint_path = "checkpoints/mobilenetv3/mobilenetv3_best.pt"
 if os.path.exists(checkpoint_path):
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    model.model.load_state_dict(checkpoint["model_state_dict"])
+    state_dict = torch.load(checkpoint_path, map_location=device, weights_only=True)
+    model.load_state_dict(state_dict)
     print(f"✓ Loaded checkpoint from {checkpoint_path}")
 else:
     print(f"✗ Checkpoint not found at {checkpoint_path}")
     print("   Please run 'python train_mobilenet_j2.py' first.")
     exit(1)
 
-model.model.to(device)
-model.model.eval()
+model.to(device)
+model.eval()
 
 # Measure latency
 print("\nMeasuring GPU latency on CIFAR-10 test set...")
 print("(warm-up + measurement iterations)")
 
-stats = benchmark_latency(
-    model.model,
+stats, times = benchmark_latency(
+    model,
     test_loader,
     device=device,
     warmup_iters=100,

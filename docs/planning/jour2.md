@@ -68,13 +68,13 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
 
 ### 📊 Évaluation et mesures
 
-- [ ] **J2-08** | Évaluer l'accuracy sur le jeu de test
+- [X] **J2-08** | Évaluer l'accuracy sur le jeu de test
   - **Description** : Calculer l'accuracy finale sur CIFAR-10 test
   - **Critère de succès** : Documenter le résultat même si < 85%
   - **Labels** : `évaluation`, `métriques`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-09** | Mesurer la latence GPU (FP32)
+- [X] **J2-09** | Mesurer la latence GPU (FP32)
   - **Description** :
     - Utiliser le benchmark développé en J1
     - Batch = 1, entrée sur GPU
@@ -82,7 +82,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J2-10** | Documenter la taille du modèle
+- [X] **J2-10** | Documenter la taille du modèle
   - **Description** :
     - Nombre de paramètres
     - Taille du fichier checkpoint (MB)
@@ -93,7 +93,7 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
 
 ### 📝 Documentation et suivi
 
-- [ ] **J2-11** | Remplir la première ligne du tableau comparatif
+- [X] **J2-11** | Remplir la première ligne du tableau comparatif
   - **Description** : Ajouter les résultats dans le tableau (B1 : MobileNetV3/ShuffleNet FP32)
     | ID | Variante | Acc. (%) | Lat. moy. (ms) | Lat. p95 (ms) | Taille (MB) |
     |----|----------|----------|----------------|---------------|-------------|
@@ -110,10 +110,10 @@ Entraîner un modèle léger from-scratch et mesurer sa latence.
 
 ## ✅ Critères d'acceptation J2
 
-- [ ] Au moins un modèle léger entraîné from-scratch
-- [ ] Résultats mesurés : accuracy + latence moyenne + latence p95
-- [ ] Première ligne du tableau comparatif remplie
-- [ ] Checkpoints et logs sauvegardés
+- [X] Au moins un modèle léger entraîné from-scratch
+- [X] Résultats mesurés : accuracy + latence moyenne + latence p95
+- [X] Première ligne du tableau comparatif remplie
+- [X] Checkpoints et logs sauvegardés
 
 ---
 
