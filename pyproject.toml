@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cifaracce"
+version = "0.1.0"
+description = "Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy."
+readme = "README.md"
+requires-python = ">=3.9"
+dynamic = ["dependencies"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
