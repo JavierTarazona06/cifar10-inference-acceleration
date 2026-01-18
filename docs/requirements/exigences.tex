@@ -1,0 +1,120 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+
+\title{Projet : Accélération de l'inférence sur CIFAR-10\\Recueil des exigences et périmètre}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Contexte et objectif}
+Le projet consiste à entraîner un modèle de classification d'images pour \textbf{CIFAR-10} et à le rendre \textbf{aussi rapide que possible en inférence}, en évaluant prioritairement la \textbf{latence sur GPU} (batch = 1), tout en respectant une contrainte de performance en précision (accuracy).
+
+\section{Hypothèses et contraintes}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Données d'entraînement autorisées :} uniquement \textbf{CIFAR-10 train}. Aucune donnée externe ne doit être utilisée pour l'apprentissage.
+  \item \textbf{Objectif de précision :} atteindre \textbf{$\geq 85\%$} d'accuracy sur le \textbf{jeu de test CIFAR-10}.
+  \item \textbf{Matériel de mesure :} \textbf{GPU} (conditions de benchmark fixées et reproductibles).
+\end{itemize}
+
+\section{Exigences fonctionnelles (RF)}
+\subsection*{RF1 --- Entraînement du modèle}
+\begin{itemize}[leftmargin=*]
+  \item Le système doit permettre d'entraîner un modèle de classification sur CIFAR-10 en utilisant \textbf{uniquement} CIFAR-10 train (augmentations autorisées sur ces images).
+  \item Le modèle final doit produire une sortie \textbf{à 10 classes} (logits) correspondant aux classes CIFAR-10.
+\end{itemize}
+
+\subsection*{RF2 --- Évaluation de la précision}
+\begin{itemize}[leftmargin=*]
+  \item Le système doit calculer l'accuracy sur CIFAR-10 test.
+  \item Le système doit permettre de comparer l'accuracy entre plusieurs variantes de modèles/optimisations.
+\end{itemize}
+
+\subsection*{RF3 --- Mesure de latence en inférence (GPU)}
+\begin{itemize}[leftmargin=*]
+  \item Le système doit mesurer la \textbf{latence d'inférence} sur GPU pour \textbf{batch = 1}.
+  \item Le protocole doit inclure :
+    \begin{itemize}
+      \item un \textbf{warm-up} avant mesure,
+      \item un grand nombre d'itérations de mesure,
+      \item une \textbf{synchronisation GPU} afin d'obtenir un temps réel (ex. \texttt{torch.cuda.synchronize()} ou événements CUDA).
+    \end{itemize}
+  \item Le système doit produire au minimum : \textbf{latence moyenne} et \textbf{latence p95} (95e percentile).
+\end{itemize}
+
+\subsection*{RF4 --- Suivi des expérimentations}
+\begin{itemize}[leftmargin=*]
+  \item Le système doit enregistrer, pour chaque expérience : modèle/variante, accuracy, latence moyenne, latence p95, et (optionnel) taille du modèle et nombre de paramètres.
+  \item Le système doit permettre une comparaison synthétique (tableau) entre les variantes.
+\end{itemize}
+
+\section{Exigences non fonctionnelles (RNF)}
+\subsection*{RNF1 --- Reproductibilité}
+\begin{itemize}[leftmargin=*]
+  \item Les mesures doivent être réalisées \textbf{dans des conditions fixes} : même GPU, mêmes réglages de batch, même prétraitement, même mode d'inférence (\texttt{eval()} et \texttt{no\_grad()}).
+  \item Les résultats doivent être reproductibles à l'exécution (seed, versions loggées si possible).
+\end{itemize}
+
+\subsection*{RNF2 --- Conformité aux contraintes de données}
+\begin{itemize}[leftmargin=*]
+  \item Aucune dépendance à un pré-entraînement externe (ex. ImageNet) ne doit être utilisée pour l'apprentissage si l'interprétation du sujet est stricte.
+  \item En pratique, les modèles de type \textit{MobileNet} devront être instanciés avec \textbf{\texttt{weights=None}} et entraînés sur CIFAR-10.
+\end{itemize}
+
+\subsection*{RNF3 --- Performance}
+\begin{itemize}[leftmargin=*]
+  \item Le modèle final doit respecter \textbf{accuracy $\geq 85\%$} et viser la \textbf{plus faible latence} possible sur GPU (batch = 1).
+  \item Les optimisations doivent être évaluées \textbf{après chaque modification} (démarche incrémentale).
+\end{itemize}
+
+\subsection*{RNF4 --- Qualité de la démarche}
+\begin{itemize}[leftmargin=*]
+  \item Le livrable doit expliciter la \textbf{méthodologie} : baseline $\rightarrow$ modification $\rightarrow$ mesure $\rightarrow$ conclusion, répétée sur plusieurs itérations.
+\end{itemize}
+
+\section{Périmètre (ce qui est inclus)}
+\subsection{Périmètre recommandé (MVP robuste)}
+\begin{enumerate}[leftmargin=*, label=\textbf{P\arabic*.}]
+  \item \textbf{Benchmark de latence GPU} : implémentation du protocole (warm-up, synchronisation, moyenne + p95).
+  \item \textbf{Baseline ``vitesse''} : entraîner depuis zéro un modèle léger (\textbf{MobileNetV3-Small} ou \textbf{ShuffleNetV2}) avec \textbf{\texttt{weights=None}} et une tête de sortie à 10 classes.
+  \item \textbf{Baseline ``précision'' / teacher} : entraîner \textbf{ResNet-18 (adaptée CIFAR)} depuis zéro pour obtenir une référence robuste ($\geq 85\%$) et servir de teacher.
+  \item \textbf{Optimisations GPU prioritaires} (mesurées une à une) :
+    \begin{itemize}
+      \item inférence en \textbf{FP16} (autocast),
+      \item \textbf{\texttt{torch.compile}} (si disponible et stable),
+      \item format mémoire \textbf{\texttt{channels\_last}} (si bénéfique).
+    \end{itemize}
+  \item \textbf{Tableau comparatif final} : accuracy, latence moyenne, latence p95, (optionnel) taille \& paramètres.
+\end{enumerate}
+
+\subsection{Extensions (si nécessaire pour atteindre $\geq 85\%$ avec un modèle léger)}
+\begin{enumerate}[leftmargin=*, label=\textbf{E\arabic*.}]
+  \item \textbf{Knowledge Distillation} : teacher ResNet-18 $\rightarrow$ student MobileNet/ShuffleNet pour conserver l'accuracy tout en réduisant la latence.
+  \item \textbf{Quantification} : à considérer uniquement si le support GPU et la chaîne d'export le rendent pertinent (sinon priorité moindre en GPU).
+\end{enumerate}
+
+\section{Hors périmètre (pour éviter la dispersion)}
+\begin{itemize}[leftmargin=*]
+  \item Mixture of Experts (MoE) : complexité élevée pour un gain de latence incertain dans ce contexte.
+  \item Approches lourdes de \textit{feature engineering} + XGBoost si elles compromettent l'objectif d'accuracy ou la latence globale.
+\end{itemize}
+
+\section{Livrables attendus}
+\begin{itemize}[leftmargin=*]
+  \item Code d'entraînement et d'évaluation (accuracy + latence GPU).
+  \item Rapport synthétique des expériences (méthode incrémentale) et tableau de résultats.
+  \item Modèle final (poids) et configuration utilisée pour reproduire les mesures.
+\end{itemize}
+
+\end{document}
