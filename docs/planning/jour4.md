@@ -49,31 +49,32 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
   - **Labels** : `optimisation`, `compile`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J4-06** | Mesurer le temps de compilation
+- [X] **J4-06** | Mesurer le temps de compilation
   - **Description** :
     - Noter le temps de première exécution (compilation)
     - Ce temps est **hors métrique** de latence
   - **Labels** : `benchmark`, `documentation`
   - **Priorité** : 🟢 Basse
 
-- [ ] **J4-07** | Mesurer la latence post-compilation
+- [X] **J4-07** | Mesurer la latence post-compilation
   - **Description** :
     - Benchmark après compilation complète
     - Comparer avec FP32 et FP16 sans compile
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J4-08** | Combiner FP16 + torch.compile
+- [X] **J4-08** | Combiner FP16 + torch.compile
   - **Description** :
     - Tester la combinaison des deux optimisations
     - Mesurer latence (moyenne + p95)
   - **Labels** : `optimisation`, `benchmark`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J4-09** | Gérer l'instabilité torch.compile
+- [X] **J4-09** | Gérer l'instabilité torch.compile
   - **Description** :
     - Si erreurs ou crashes : documenter et passer en fallback
     - Fallback : FP16 seul ou TorchScript (optionnel)
+    - Statut : compilations FP32/FP16 stables sous WSL (chemin sans espaces) ; fallback FP16 seul prêt si régression ultérieure
   - **Labels** : `risque`, `fallback`
   - **Priorité** : 🟢 Basse
 
