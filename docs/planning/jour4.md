@@ -40,7 +40,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ### 🔧 I3.2 — torch.compile (si stable)
 
-- [ ] **J4-05** | Tester torch.compile sur le modèle léger
+- [X] **J4-05** | Tester torch.compile sur le modèle léger
   - **Description** :
     ```python
     model_compiled = torch.compile(model, mode="reduce-overhead")
