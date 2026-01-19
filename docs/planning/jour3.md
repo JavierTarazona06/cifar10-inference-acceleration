@@ -18,7 +18,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
   - **Labels** : `architecture`, `code`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J3-02** | Vérifier le forward pass
+- [X] **J3-02** | Vérifier le forward pass
   - **Description** : Tester avec un batch fictif (1, 3, 32, 32) et vérifier la sortie (1, 10)
   - **Labels** : `test`, `validation`
   - **Priorité** : 🟡 Moyenne
@@ -27,7 +27,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
 
 ### ⚙️ Configuration de l'entraînement
 
-- [ ] **J3-03** | Définir les hyperparamètres
+- [X] **J3-03** | Définir les hyperparamètres
   - **Description** :
     - **LR initial** : 0.1 (typique pour SGD sur CIFAR)
     - **Optimizer** : SGD avec momentum 0.9, weight decay 5e-4
@@ -37,7 +37,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
   - **Labels** : `hyperparamètres`, `configuration`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J3-04** | Configurer les augmentations robustes
+- [X] **J3-04** | Configurer les augmentations robustes
   - **Description** :
     - RandomCrop(32, padding=4)
     - RandomHorizontalFlip(p=0.5)
