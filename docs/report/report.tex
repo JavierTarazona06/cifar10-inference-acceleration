@@ -434,7 +434,7 @@ Entraînement de ResNet-18 adaptée CIFAR-10 from-scratch, 200 epochs :
 
 MobileNetV3-Small student entraîné avec ResNet-18 teacher (distillation perte, $T = 4.0$, $\alpha = 0.7$) :
 
-%TODO: Pour changer when executed
+%TODO: To change when executed, the final distillation
 \begin{itemize}[leftmargin=*]
     \item \textbf{Entraînement} : 120 epochs initial, puis 180 epochs en reprendre pour atteindre 300.
     \item \textbf{Accuracy à epoch 120} : 79.43\%
@@ -537,6 +537,7 @@ Ce projet a validé une méthodologie incrémentale pour minimiser la latence GP
     \item \checkmark\ Code centralisé, reproductible, avec configuration unifiée.
 \end{itemize}
 
+%TODO: To change when executed, the final distillation
 \textbf{Modèle final :} Candidat issu de la distillation ou ResNet-18 + compile, avec latence optimisée et accuracy $\geq 85\%$.
 
 
