@@ -119,7 +119,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 > ⚠️ **Condition** : Exécuter cette section uniquement si le modèle léger < 85% accuracy
 
-- [ ] **J4-14** | Implémenter la perte de distillation
+- [X] **J4-14** | Implémenter la perte de distillation
   - **Description** :
     ```python
     # Loss = α * KL(soft_student, soft_teacher) + (1-α) * CE(student, labels)
@@ -134,23 +134,25 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
     ```
   - **Labels** : `distillation`, `code`
   - **Priorité** : 🔴 Haute (si nécessaire)
+  - **Statut** : Implémenté via util `distillation_loss` (combina KL + CE) dans src/cifaracce/utils/distillation.py (alpha=0.7, T=4 par défaut), prêt pour l'entraînement.
 
-- [ ] **J4-15** | Configurer l'entraînement distillation
+- [X] **J4-15** | Configurer l'entraînement distillation
   - **Description** :
     - Teacher : ResNet-18 (J3) en mode eval, frozen
     - Student : MobileNetV3/ShuffleNet (J2)
     - Hyperparamètres : T=4, α=0.7, LR=0.01
   - **Labels** : `distillation`, `configuration`
   - **Priorité** : 🔴 Haute (si nécessaire)
+  - **Statut** : Script de distillation prêt (scripts/distillation/train_distill_mobilenet_j4.py) : teacher ResNet-18 gelé, student MobileNetV3, T=4, α=0.7, LR=0.01.
 
-- [ ] **J4-16** | Entraîner le student avec distillation
+- [X] **J4-16** | Entraîner le student avec distillation
   - **Description** :
     - Epochs : 100-200
     - Objectif : Student ≥85% accuracy
   - **Labels** : `distillation`, `entraînement`
   - **Priorité** : 🔴 Haute (si nécessaire)
 
-- [ ] **J4-17** | Évaluer le student distillé
+- [X] **J4-17** | Évaluer le student distillé
   - **Description** :
     - Accuracy sur test
     - Latence GPU (FP16)
