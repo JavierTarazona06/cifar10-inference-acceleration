@@ -58,13 +58,13 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
 
 ### 🏋️ Entraînement du teacher
 
-- [ ] **J3-06** | Lancer l'entraînement ResNet-18
+- [X] **J3-06** | Lancer l'entraînement ResNet-18
   - **Description** : Entraîner le modèle sur CIFAR-10 train
   - **Critère de succès** : Atteindre **≥85% accuracy** sur test
   - **Labels** : `entraînement`, `exécution`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J3-07** | Monitorer l'entraînement
+- [X] **J3-07** | Monitorer l'entraînement
   - **Description** :
     - Logger loss train/val à chaque epoch
     - Logger accuracy train/val
@@ -72,7 +72,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
   - **Labels** : `monitoring`, `logs`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J3-08** | Sauvegarder les checkpoints
+- [X] **J3-08** | Sauvegarder les checkpoints
   - **Description** :
     - `resnet18_cifar_best.pth` (meilleure accuracy val)
     - `resnet18_cifar_last.pth` (dernier epoch)
@@ -84,13 +84,13 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
 
 ### 📊 Évaluation et mesures
 
-- [ ] **J3-09** | Évaluer l'accuracy finale sur test
+- [X] **J3-09** | Évaluer l'accuracy finale sur test
   - **Description** : Charger le best checkpoint et calculer l'accuracy sur CIFAR-10 test
   - **Critère de succès** : **≥85%**
   - **Labels** : `évaluation`, `métriques`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J3-10** | Mesurer la latence GPU (FP32)
+- [X] **J3-10** | Mesurer la latence GPU (FP32)
   - **Description** :
     - Utiliser le benchmark J1
     - Batch = 1, entrée sur GPU
@@ -98,7 +98,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J3-11** | Documenter la taille du modèle
+- [X] **J3-11** | Documenter la taille du modèle
   - **Description** :
     - Nombre de paramètres (~11M pour ResNet-18)
     - Taille du fichier checkpoint (MB)
@@ -109,7 +109,7 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
 
 ### 📝 Documentation et suivi
 
-- [ ] **J3-12** | Mettre à jour le tableau comparatif
+- [X] **J3-12** | Mettre à jour le tableau comparatif
   - **Description** : Ajouter les résultats dans le tableau (B2 : ResNet-18 CIFAR FP32)
     | ID | Variante | Acc. (%) | Lat. moy. (ms) | Lat. p95 (ms) | Taille (MB) |
     |----|----------|----------|----------------|---------------|-------------|
@@ -117,12 +117,12 @@ Obtenir une référence robuste ≥85% et disposer d'un teacher pour la distilla
   - **Labels** : `documentation`, `résultats`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J3-13** | Documenter les hyperparamètres
+- [X] **J3-13** | Documenter les hyperparamètres
   - **Description** : Créer une fiche reproductibilité avec tous les paramètres utilisés
   - **Labels** : `documentation`, `reproductibilité`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J3-14** | Préparer le teacher pour distillation
+- [X] **J3-14** | Préparer le teacher pour distillation
   - **Description** :
     - Vérifier que le checkpoint est bien sauvegardé
     - Tester le chargement du modèle
