@@ -8,6 +8,7 @@ from torchvision import datasets, transforms
 from time import perf_counter
 from datetime import datetime
 from pathlib import Path
+from contextlib import nullcontext
 
 # ========================================================================
 # BENCHMARK LATENCY MODULE
@@ -40,7 +41,16 @@ def benchmark_accuracy(model, dataloader, device='cuda'):
 # Benchmark Latency
 # ------------------------------- #
 
-def benchmark_latency(model, dataloader, warmup_iters=WARM_UP_ITERS, measure_iters=MEASURE_ITERS, device='cuda'):
+def benchmark_latency(
+    model,
+    dataloader,
+    warmup_iters=WARM_UP_ITERS,
+    measure_iters=MEASURE_ITERS,
+    device='cuda',
+    channels_last=False,
+    use_amp=False,
+    amp_dtype=torch.float16,
+):
     """
     Benchmark latency d'inférence GPU pour batch_size=1, suelement 1 image.
 
@@ -50,6 +60,9 @@ def benchmark_latency(model, dataloader, warmup_iters=WARM_UP_ITERS, measure_ite
         warmup_iters: nombre d'itérations de warm-up (default 50)
         measure_iters: nombre d'itérations de mesure (default 500)
         device: 'cuda' (GPU) ou 'cpu'
+        channels_last: si True, convertit modèle + entrées en format channels_last
+        use_amp: si True, active autocast pour mesurer en FP16/BF16
+        amp_dtype: dtype utilisé avec autocast (ex: torch.float16)
 
     Returns:
         dict avec statistiques de latence (mean, p95, std, min, max en ms)
@@ -58,12 +71,24 @@ def benchmark_latency(model, dataloader, warmup_iters=WARM_UP_ITERS, measure_ite
     # Check eval mode and device
     model.eval()
     model.to(device)
+    if channels_last:
+        model.to(memory_format=torch.channels_last)
+
+    device_str = str(device)
+
+    def autocast_ctx():
+        if use_amp and device_str.startswith('cuda'):
+            return torch.amp.autocast(device_type=device_str.split(':')[0], dtype=amp_dtype)
+        return nullcontext()
 
     # Send data to be stored in GPU
     print(f"[Benchmark] Préparation des données sur {device}...")
     gpu_data = []
     for i, (images, labels) in enumerate(dataloader):
-        images = images.to(device)
+        if channels_last:
+            images = images.to(device, memory_format=torch.channels_last)
+        else:
+            images = images.to(device)
         labels = labels.to(device)
         gpu_data.append((images, labels))
         if i >= max(warmup_iters, measure_iters) - 1:
@@ -73,7 +98,7 @@ def benchmark_latency(model, dataloader, warmup_iters=WARM_UP_ITERS, measure_ite
 
     # WARM-UP (no mesure) to avoid bias for overcharging
     print(f"[Benchmark] Warm-up: {warmup_iters} itérations...")
-    with torch.no_grad():
+    with torch.no_grad(), autocast_ctx():
         for i in range(min(warmup_iters, len(gpu_data))):
             images, _ = gpu_data[i]
             _ = model(images)
@@ -85,7 +110,7 @@ def benchmark_latency(model, dataloader, warmup_iters=WARM_UP_ITERS, measure_ite
     print(f"[Benchmark] Mesure: {measure_iters} itérations...")
     times = []
 
-    with torch.no_grad():
+    with torch.no_grad(), autocast_ctx():
         for i in range(min(measure_iters, len(gpu_data))):
             images, _ = gpu_data[i]
 

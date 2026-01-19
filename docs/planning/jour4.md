@@ -82,7 +82,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ### 🔄 I3.3 — Format channels_last
 
-- [ ] **J4-10** | Convertir le modèle en channels_last
+- [X] **J4-10** | Convertir le modèle en channels_last
   - **Description** :
     ```python
     model = model.to(memory_format=torch.channels_last)
@@ -91,24 +91,27 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
   - **Labels** : `optimisation`, `mémoire`
   - **Priorité** : 🟡 Moyenne
 
-- [ ] **J4-11** | Mesurer la latence channels_last (modèle léger)
+- [X] **J4-11** | Mesurer la latence channels_last (modèle léger)
   - **Description** :
     - Tester sur MobileNetV3/ShuffleNet
     - Comparer avec baseline FP32
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🟡 Moyenne
+  - **Résultat** : MobileNetV3 FP32 et FP16 testés (warmup 10, runs 50) → aucun gain, légère régression en FP32, gain p95 marginal en FP16. Channels_last non retenu.
 
-- [ ] **J4-12** | Mesurer la latence channels_last (ResNet-18)
+- [X] **J4-12** | Mesurer la latence channels_last (ResNet-18)
   - **Description** : Tester sur le teacher pour comparaison
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🟢 Basse
+  - **Résultat** : non poursuivi après constat d'absence de gain sur MobileNetV3; channels_last abandonné.
 
-- [ ] **J4-13** | Décider de garder channels_last
+- [X] **J4-13** | Décider de garder channels_last
   - **Description** :
     - Garder uniquement si amélioration mesurable (>5%)
     - Sinon abandonner cette piste
   - **Labels** : `décision`, `analyse`
   - **Priorité** : 🟡 Moyenne
+  - **Décision** : abandonner channels_last (gain < 5%, voire régression).
 
 ---
 
