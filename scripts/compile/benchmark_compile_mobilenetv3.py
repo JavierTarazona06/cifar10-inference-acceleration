@@ -195,25 +195,43 @@ def main():
         print("    and matching triton version, or rerun with --skip-baseline to keep eager only.")
         return
 
+    # J4-06: Measure compilation time (first call, which includes compile overhead)
+    print("\n" + "=" * 60)
+    print("J4-06 | COMPILATION TIME MEASUREMENT")
+    print("=" * 60)
     compile_first_ms = first_call_time(model_compiled, test_loader, device, precision=args.mode)
-    print(f"First compiled call (includes compile) : {compile_first_ms:.4f} ms")
+    print(f"First compiled call (includes compilation overhead): {compile_first_ms:.4f} ms")
+    print("Note: This includes both JIT compilation and first inference.")
+    print("=" * 60)
 
-    # Post-compile latency
-    print("\n== Compiled model benchmark ==")
+    # J4-07: Post-compile latency (after compilation is warm)
+    print("\n== J4-07 | POST-COMPILATION LATENCY BENCHMARK ==")
     lat_comp = benchmark_latency(
         model_compiled, test_loader, device, precision=args.mode,
         num_warmup=args.num_warmup, num_runs=args.num_runs,
     )
-    stats_comp = summarize(lat_comp, "LATENCY (compiled)")
+    stats_comp = summarize(lat_comp, f"LATENCY (compiled, {args.mode.upper()})")
 
+    # Summary comparison table
     if stats_base is not None:
         mean_base, mean_comp = stats_base["mean"], stats_comp["mean"]
         p95_base, p95_comp = stats_base["p95"], stats_comp["p95"]
         speedup_mean = mean_base / mean_comp if mean_comp > 0 else float("inf")
         speedup_p95 = p95_base / p95_comp if p95_comp > 0 else float("inf")
-        print("\n📊 Speedup vs baseline:")
-        print(f"  Mean: ×{speedup_mean:.2f}")
-        print(f"  p95 : ×{speedup_p95:.2f}")
+
+        # Comparison table
+        print("\n" + "=" * 80)
+        print("COMPARISON: Uncompiled vs Compiled (FP32/FP16)")
+        print("=" * 80)
+        comparison_rows = [
+            ["Metric", "Baseline (eager)", "Compiled", "Speedup"],
+            ["-" * 10, "-" * 15, "-" * 12, "-" * 10],
+            [f"Mean latency (ms)", f"{mean_base:.4f}", f"{mean_comp:.4f}", f"×{speedup_mean:.2f}"],
+            [f"p95 latency (ms)", f"{p95_base:.4f}", f"{p95_comp:.4f}", f"×{speedup_p95:.2f}"],
+        ]
+        for row in comparison_rows:
+            print(f"  {row[0]:<20} {row[1]:<18} {row[2]:<15} {row[3]:<12}")
+        print("=" * 80)
 
 
 if __name__ == "__main__":
