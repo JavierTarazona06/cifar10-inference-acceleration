@@ -19,19 +19,20 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from cifaracce.data import train_loader, test_loader
 from cifaracce.models.resnet18 import ResNet18
 from cifaracce.utils.seed import set_seed
+from cifaracce import config as cfg
 
 
 def main():
-    set_seed(42)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    set_seed(cfg.SEED)
+    device = cfg.DEVICE
     print(f"Using device: {device}")
 
-    num_epochs = 200
-    lr = 0.1
-    momentum = 0.9
-    weight_decay = 5e-4
-    target_acc = 85.0
-    early_stop_floor = 120  # allow stopping once accuracy is stable after this epoch
+    num_epochs = cfg.RESNET_TRAIN['epochs']
+    lr = cfg.RESNET_TRAIN['lr']
+    momentum = cfg.RESNET_TRAIN['momentum']
+    weight_decay = cfg.RESNET_TRAIN['weight_decay']
+    target_acc = cfg.RESNET_TRAIN['target_acc']
+    early_stop_floor = cfg.RESNET_TRAIN['early_stop_floor']  # allow stopping once accuracy is stable after this epoch
 
     model = ResNet18(num_classes=10).to(device)
 
@@ -39,7 +40,7 @@ def main():
         model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer, T_max=num_epochs
+        optimizer, T_max=cfg.RESNET_TRAIN['scheduler_T_max']
     )
     # To use MultiStepLR instead, replace the scheduler above with:
     # scheduler = torch.optim.lr_scheduler.MultiStepLR(
@@ -48,10 +49,10 @@ def main():
 
     best_acc = 0.0
     best_epoch = 0
-    checkpoints_dir = Path("checkpoints/resnet18")
+    checkpoints_dir = cfg.CHECKPOINTS['resnet18_dir']
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
 
-    log_path = Path("results_resnet18_training.csv")
+    log_path = cfg.LOGS['training_resnet_csv']
     with log_path.open("w", newline="") as f:
         writer = csv.DictWriter(
             f,

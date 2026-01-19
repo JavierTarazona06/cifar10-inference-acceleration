@@ -21,23 +21,27 @@ sys.path.insert(0, str(Path(__file__).parent / 'src'))
 from cifaracce.data import train_loader, test_loader
 from cifaracce.models import MobileNetV3Small, get_model_info
 from cifaracce.utils.seed import set_seed
+from cifaracce import config as cfg
 
 
 def main():
-    set_seed(42)
+    set_seed(cfg.SEED)
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = cfg.DEVICE
     print(f"Using device: {device}")
 
-    num_epochs = 60
-    early_stop_epoch = 40  # evaluar corte si ya >=85%
+    num_epochs = cfg.TRAIN_EPOCHS
+    early_stop_epoch = cfg.EARLY_STOP_EPOCH  # evaluar corte si ya >=85%
 
     model = MobileNetV3Small(num_classes=10, device=device)
     model.to(device)
 
     # Hyperparams
     optimizer = torch.optim.SGD(
-        model.parameters(), lr=0.12, momentum=0.9, weight_decay=5e-4
+        model.parameters(),
+        lr=cfg.OPTIMIZER['lr'],
+        momentum=cfg.OPTIMIZER['momentum'],
+        weight_decay=cfg.OPTIMIZER['weight_decay']
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=num_epochs
@@ -47,11 +51,11 @@ def main():
 
     best_acc = 0.0
     best_epoch = 0
-    checkpoints_dir = Path('checkpoints/mobilenetv3')
+    checkpoints_dir = cfg.CHECKPOINTS['mobilenet_dir']
     checkpoints_dir.mkdir(parents=True, exist_ok=True)
 
     # CSV logging
-    log_path = Path('results_j2_mobilenet_training.csv')
+    log_path = cfg.LOGS['training_mobilenet_csv']
     with log_path.open('w', newline='') as f:
         writer = csv.DictWriter(
             f,
@@ -120,7 +124,7 @@ def main():
             torch.save(model.state_dict(), checkpoints_dir / 'mobilenetv3_best.pt')
 
         # Early stop opcional
-        if epoch >= early_stop_epoch and test_acc >= 85.0:
+        if epoch >= early_stop_epoch and test_acc >= cfg.EARLY_STOP_ACC:
             print(f"Early stop: test_acc {test_acc:.2f}% >= 85% en epoch {epoch}")
             break
 

@@ -33,10 +33,6 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 
 │       └── logging.py         # save metrics/metadata to CSV
 
-├── configs/                   # YAML/JSON configs per experiment
-
-├── results/                   # benchmark CSV + summary tables/plots
-
 ├── checkpoints/               # saved weights (gitignored)
 
 └── README.md
@@ -45,9 +41,13 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 ## Notes / guardrails
 - No ImageNet weights: instantiate models with `weights=None` (or equivalent) and train on CIFAR-10.
 - Keep benchmarking fair: same preprocessing, same precision mode, same GPU, same batch size, same protocol.
-- Re-run final candidates 3 times and report variability.
 
 ## Deliverables
 - Training + evaluation + benchmarking code
 - Results CSV + final comparison table (accuracy vs latency)
 - Final model weights + config to reproduce the reported numbers
+
+## Configuration
+- Centralized settings live in [src/cifaracce/config.py](src/cifaracce/config.py): device, seeds, training hyperparameters, checkpoint paths, and benchmark defaults.
+- Scripts import this module, e.g., the MobileNet J2 training at [scripts/mobilenet_j2/train_mobilenet_j2.py](scripts/mobilenet_j2/train_mobilenet_j2.py) uses `cfg.DEVICE`, `cfg.TRAIN_EPOCHS`, optimizer params, and paths.
+- To change defaults, edit the values in `config.py`. This keeps experiments consistent and reproducible.

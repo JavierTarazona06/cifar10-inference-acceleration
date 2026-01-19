@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from cifaracce.data import test_loader
 from cifaracce.models.resnet18 import ResNet18
 from cifaracce.utils.seed import set_seed
+from cifaracce import config as cfg
 
 
 def evaluate_checkpoint(checkpoint_path, device):
@@ -77,15 +78,15 @@ def evaluate_checkpoint(checkpoint_path, device):
 
 
 def main():
-    set_seed(42)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    set_seed(cfg.SEED)
+    device = cfg.DEVICE
     print(f"Using device: {device}\n")
-    
-    checkpoint_path = Path("checkpoints/resnet18/resnet18_cifar_best.pth")
+
+    checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_cifar_best.pth"
     
     # Fallback to old format if new one doesn't exist
     if not checkpoint_path.exists():
-        old_checkpoint_path = Path("checkpoints/resnet18/resnet18_best.pt")
+        old_checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_best.pt"
         if old_checkpoint_path.exists():
             print(f"⚠ New checkpoint not found, using old format: {old_checkpoint_path}\n")
             checkpoint_path = old_checkpoint_path
@@ -107,8 +108,8 @@ def main():
         ["Epoch (checkpoint)", epoch if epoch != "unknown" else "N/A"],
         ["Accuracy (training log)", f"{training_best_acc:.2f}%" if training_best_acc is not None else "N/A"],
         ["Accuracy (test eval)", f"{test_acc:.2f}%"],
-        ["Target accuracy", "85.00%"],
-        ["Status", "✓ PASS" if test_acc >= 85.0 else "✗ FAIL"],
+        ["Target accuracy", f"{cfg.RESNET_TRAIN['target_acc']:.2f}%"],
+        ["Status", "✓ PASS" if test_acc >= cfg.RESNET_TRAIN['target_acc'] else "✗ FAIL"],
     ]
     
     print("\n" + "=" * 60)
