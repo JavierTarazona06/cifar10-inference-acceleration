@@ -9,7 +9,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ### ⚡ I3.1 — Inférence FP16 (autocast)
 
-- [ ] **J4-01** | Implémenter l'inférence en FP16
+- [X] **J4-01** | Implémenter l'inférence en FP16
   - **Description** :
     ```python
     with torch.cuda.amp.autocast(dtype=torch.float16):
@@ -18,7 +18,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
   - **Labels** : `optimisation`, `FP16`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J4-02** | Mesurer la latence FP16 (modèle léger)
+- [X] **J4-02** | Mesurer la latence FP16 (modèle léger)
   - **Description** :
     - Appliquer sur MobileNetV3/ShuffleNet (B1)
     - Benchmark : warm-up + mesure (moyenne + p95)
@@ -26,12 +26,12 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J4-03** | Vérifier l'accuracy en FP16
+- [X] **J4-03** | Vérifier l'accuracy en FP16
   - **Description** : S'assurer que l'accuracy ne chute pas significativement (< 0.5%)
   - **Labels** : `validation`, `accuracy`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J4-04** | Mesurer la latence FP16 (ResNet-18)
+- [X] **J4-04** | Mesurer la latence FP16 (ResNet-18)
   - **Description** : Appliquer le même test sur le teacher pour comparaison
   - **Labels** : `benchmark`, `latence`
   - **Priorité** : 🟡 Moyenne
