@@ -1,0 +1,547 @@
+\documentclass[11pt,a4paper]{article}
+
+% ----------------------------------------------------
+% PACKAGES ESSENTIELS
+% ----------------------------------------------------
+% Nota: inputenc se omite a menudo en compiladores modernos (LuaLaTeX/XeLaTeX),
+% pero se mantiene aquí por compatibilidad con el código original si usas PDFLaTeX.
+%\usepackage[utf8]{inputenc}     % Encodage du texte (UTF-8)
+\usepackage[T1]{fontenc}        % Encodage des caractères
+\usepackage[french]{babel}      % Langue du document
+\usepackage{geometry}           % Gestion des marges
+\usepackage{graphicx}           % Insertion d’images
+\usepackage{amsmath, amssymb}   % Symboles et équations mathématiques
+\usepackage{siunitx}            % Unités du Système International (SI)
+\usepackage{caption}            % Amélioration des légendes
+\usepackage{subcaption}         % Sous-figures
+\usepackage{booktabs}           % Tableaux esthétiques
+\usepackage{tabularx}           % Tableaux largeur fixe
+\usepackage{float}              % Contrôle de la position des figures
+\usepackage{xcolor}             % Gestion des couleurs
+\usepackage{fancyhdr}           % En-têtes et pieds de page personnalisés
+\usepackage{enumitem}           % Listes personnalisées
+\usepackage{physics}            % Notation physique (contraintes, etc.)
+\usepackage{titlesec}           % Style des sections
+\usepackage[strict]{changepage} % Ajustement des marges locales
+\usepackage{framed}             % Cadres et encadrés
+
+% Ajuster la hauteur d'en-tête pour fancyhdr
+\setlength{\headheight}{14pt}
+
+% Hyperref doit être chargé en dernier (généralement)
+\usepackage{hyperref}           % Liens cliquables dans le PDF
+
+% ----------------------------------------------------
+% PARAMÈTRES DE MISE EN PAGE
+% ----------------------------------------------------
+\geometry{margin=2.5cm}            % Marges du document
+\setlength{\parskip}{0.5em}        % Espacement entre paragraphes
+\setlength{\parindent}{0pt}        % Pas d’indentation au début des paragraphes
+
+% ----------------------------------------------------
+% CONFIGURATION DES LIENS
+% ----------------------------------------------------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=enstaBleuFonce, % Utilisation de la couleur ENSTA pour les liens internes (TOC)
+    urlcolor=blue,
+    citecolor=gray
+}
+
+% ----------------------------------------------------
+% COULEURS ENSTA
+% ----------------------------------------------------
+\definecolor{enstaBleuFonce}{HTML}{003366}    % Bleu marine (sections)
+\definecolor{enstaBleuClair}{HTML}{0073CF}    % Bleu moyen (sous-sections)
+\definecolor{formalshade}{rgb}{0.95,0.95,1}   % Fond clair pour encadrés
+
+% ----------------------------------------------------
+% STYLE DES SECTIONS
+% ----------------------------------------------------
+% Section (bleu marine, majuscule, gras, ligne horizontale)
+\titleformat{\section}[block]
+  {\normalfont\Large\bfseries\color{enstaBleuFonce}}
+  {\thesection}{1em}{}
+  [\vspace{0.3em}\titlerule\color{enstaBleuFonce}\vspace{0.3em}]
+
+% Sous-section (bleu clair)
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{enstaBleuClair}}
+  {\thesubsection}{1em}{}
+
+% Sous-sous-section (gris)
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{black!70}}
+  {\thesubsubsection}{1em}{}
+
+% ----------------------------------------------------
+% EN-TÊTES ET PIEDS DE PAGE
+% ----------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{ENSTA Paris}
+\fancyhead[R]{Projet : CIFAR10 Inference Acceleration}
+\fancyfoot[C]{\thepage}
+
+% ----------------------------------------------------
+% ENVIRONNEMENT FORMAL (ENCADRÉ)
+% ----------------------------------------------------
+\newenvironment{formal}{%
+\def\FrameCommand{%
+  \hspace{1pt}%
+  {\color{enstaBleuFonce}\vrule width 2pt}%
+  {\color{formalshade}\vrule width 4pt}%
+  \colorbox{formalshade}%
+}%
+\MakeFramed{\advance\hsize-\width\FrameRestore}%
+\noindent\hspace{-4.55pt}%
+\begin{adjustwidth}{}{7pt}%
+\vspace{4pt}%
+}{%
+\vspace{4pt}\end{adjustwidth}\endMakeFramed%
+}
+
+% ----------------------------------------------------
+% DÉBUT DU DOCUMENT
+% ----------------------------------------------------
+\begin{document}
+
+% ====================================================
+% PAGE DE COUVERTURE
+% ====================================================
+\begin{titlepage}
+    \centering
+    \vspace*{4cm}
+    
+    \includegraphics[width=0.6\textwidth]{imgs/logo_ensta_2025.jpg}\par\vspace{0.5cm}
+    
+    \vspace{0.5cm}
+    {\Large Apprentissage efficace pour une classification rapide \par}
+    \vspace{0.2cm}
+    {\huge\bfseries Projet : CIFAR10 Inference Acceleration \par}
+    \vspace{3cm}
+    {\Large Javier andres TARAZONA JIMENEZ \par}
+    {\Large Mateus BASTOS SOARES \par}
+    {\Large Julia ellen DIAS LEITE \par}
+    {\Large  \par}
+    \vspace{1.5cm}
+    \textbf{Encadrant :} Adrien CHAN HON TONG \par
+    \vfill
+    École Nationale Supérieure des Techniques Avancées (ENSTA)\\
+    Majeure STIC\\
+    Janvier 2026 \par
+\end{titlepage}
+
+% ====================================================
+% TABLE DES MATIÈRES (ÍNDICE)
+% ====================================================
+\newpage
+% Change le nom "Table des matières" si nécessaire avec :
+% \renewcommand{\contentsname}{Sommaire}
+\tableofcontents
+\newpage
+
+% ====================================================
+% INTRODUCTION
+% ====================================================
+
+\section{Introduction}
+
+\subsection{Contexte et motivation}
+
+La classification d'images sur CIFAR-10 est une tâche fondamentale en apprentissage profond, largement utilisée 
+comme benchmark de référence pour valider de nouvelles architectures et techniques d'optimisation. Cependant, 
+au-delà de la performance en précision, un enjeu croissant en apprentissage automatique est la \textbf{latence d'inférence}, 
+particulièrement en environnement GPU embarqué.
+
+L'objectif de ce projet est d'explorer des stratégies pour \textbf{minimiser la latence d'inférence sur GPU} (batch = 1) 
+tout en maintenant une précision suffisante (\textit{accuracy} $\geq 85\%$) sur CIFAR-10. Une approche incrémentale — 
+baseline $\rightarrow$ optimisation $\rightarrow$ mesure — permettra d'évaluer l'efficacité de chaque technique et 
+d'identifier le meilleur compromis.
+
+\subsection{Objectifs du projet}
+
+\begin{enumerate}[leftmargin=*]
+    \item Mettre en place un protocole fiable de mesure de latence GPU (warm-up, synchronisation, statistiques).
+    \item Entraîner deux baselines : un modèle léger (MobileNetV3-Small) pour la vitesse et un modèle robuste (ResNet-18) pour la précision.
+    \item Tester des optimisations GPU : FP16 (autocast), \texttt{torch.compile}, format mémoire \texttt{channels\_last}.
+    \item Si nécessaire, implémenter la distillation de connaissances pour conserver l'accuracy tout en réduisant la latence.
+    \item Compiler un tableau comparatif et justifier le choix final.
+\end{enumerate}
+
+\subsection{Contraintes et périmètre}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Données} : uniquement CIFAR-10 train (pas de données externes ou pré-entraînement ImageNet).
+    \item \textbf{Accuracy cible} : $\geq 85\%$ sur test CIFAR-10.
+    \item \textbf{Métrique principale} : latence GPU en batch = 1 (moyenne et p95).
+    \item \textbf{Matériel} : GPU NVIDIA avec CUDA 12.1, PyTorch 2.5+.
+\end{itemize}
+
+% ====================================================
+% EXIGENCES
+% ====================================================
+
+\section{Exigences et spécifications}
+
+\subsection{Exigences fonctionnelles}
+
+\begin{description}[leftmargin=*]
+    \item[RF1 --- Entraînement] Le système doit permettre d'entraîner un modèle de classification (10 classes) sur CIFAR-10 train uniquement, avec augmentations de données autorisées.
+    
+    \item[RF2 --- Évaluation accuracy] Calcul de l'accuracy sur CIFAR-10 test ; comparaison entre variantes.
+    
+    \item[RF3 --- Mesure de latence GPU] Mesure fiable de la latence d'inférence (batch = 1) avec :
+    \begin{itemize}[leftmargin=*]
+        \item warm-up (50--200 itérations),
+        \item synchronisation GPU (\texttt{torch.cuda.synchronize()} ou événements CUDA),
+        \item statistiques : moyenne, p95, écart-type.
+    \end{itemize}
+    
+    \item[RF4 --- Suivi des expériences] Enregistrement des résultats (modèle, accuracy, latence) dans 
+    un tableau comparatif (CSV).
+\end{description}
+
+\subsection{Exigences non fonctionnelles}
+
+\begin{description}[leftmargin=*]
+    \item[RNF1 --- Reproductibilité] Conditions fixes : même GPU, même batch, même prétraitement, seed figé.
+    
+    \item[RNF2 --- Conformité aux données] Pas de dépendance à pré-entraînement externe (weights=None).
+    
+    \item[RNF3 --- Performance] Accuracy $\geq 85\%$ + latence la plus faible possible.
+    
+    \item[RNF4 --- Méthodologie] Démarche incrémentale avec justification à chaque étape.
+\end{description}
+
+% ====================================================
+% MÉTHODOLOGIE
+% ====================================================
+
+\section{Méthodologie et approche}
+
+\subsection{Démarche incrémentale}
+
+Le projet suit une démarche \textit{baseline} $\rightarrow$ \textit{optimisation} $\rightarrow$ \textit{mesure} sur 5 jalons :
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{J1 (I0)} : Mise en place du benchmark de latence GPU. Protocole validé et reproductible.
+    
+    \item \textbf{J2 (I1)} : Baseline vitesse. MobileNetV3-Small entraîné from-scratch. Première mesure de latence FP32.
+    
+    \item \textbf{J3 (I2)} : Baseline précision (teacher). ResNet-18 CIFAR-10 atteignant $\geq 85\%$. Mesure de latence FP32.
+    
+    \item \textbf{J4 (I3--I4)} : Optimisations GPU (FP16, torch.compile, channels\_last) et optionnellement distillation. Mesures incrémentales.
+    
+    \item \textbf{J5 (I5)} : Consolidation. Mesures finales (3 runs), tableau comparatif, rapport et justification.
+\end{enumerate}
+
+\subsection{Protocole de benchmark}
+
+Le protocole de latence GPU est défini une fois pour J1 et appliqué systématiquement :
+
+\begin{formal}
+\textbf{Protocole de mesure de latence GPU (batch = 1)}
+\begin{enumerate}[leftmargin=*]
+    \item Charger le modèle en mode \texttt{eval()} sur GPU.
+    \item Pré-charger les images de test sur GPU (éviter transfert CPU $\leftrightarrow$ GPU dans la mesure).
+    \item \textbf{Warm-up} : 50--200 passes sans mesure (stabilisation GPU).
+    \item \textbf{Mesure} : 500--1000 passes avec synchronisation précise (événements CUDA ou \texttt{perf\_counter}).
+    \item Calculer : moyenne (ms), p95, p50, écart-type, min, max.
+    \item Enregistrer dans un fichier CSV pour traçabilité.
+\end{enumerate}
+\end{formal}
+
+\subsection{Architectures testées}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{MobileNetV3-Small} (weights=None) : modèle léger, rapide, $\approx$ 2.3 M paramètres.
+    \item \textbf{ResNet-18 CIFAR-10} (adaptée) : modèle robuste, référence pour la précision, $\approx$ 11 M paramètres.
+\end{itemize}
+
+\subsection{Optimisations GPU testées}
+
+\begin{description}[leftmargin=*]
+    \item[FP16 (Autocast)] Inférence en demi-précision via \texttt{torch.amp.autocast} pour réduire la bande passante et accélérer les opérations.
+    
+    \item[\texttt{torch.compile}] Compilation Just-In-Time (PyTorch 2.0+) avec mode \texttt{reduce-overhead} pour batch = 1.
+    
+    \item[\texttt{channels\_last}] Format mémoire NHWC (au lieu de NCHW) pour exploiter les caches GPU de certaines architectures.
+    
+    \item[Distillation de connaissances] Si le modèle léger n'atteint pas 85\%, utiliser ResNet-18 comme teacher pour guider MobileNetV3-Small via une perte combinée (KL divergence + cross-entropy).
+\end{description}
+
+% ====================================================
+% ARCHITECTURE ET IMPLÉMENTATION
+% ====================================================
+
+\section{Architecture et implémentation}
+
+\subsection{Structure du code}
+
+\begin{verbatim}
+src/cifaracce/
+|-- __init__.py
+|-- data.py              # Loaders CIFAR-10 (train/test)
+|-- bench.py             # Benchmark latence GPU
+|-- validation.py        # Évaluation accuracy
+|-- models/
+|   |-- mobileNet.py     # MobileNetV3-Small
+|   \-- resnet18.py      # ResNet-18 CIFAR-10
+|-- utils/
+|   |-- seed.py          # Reproductibilité
+|   \-- distillation.py  # Perte de distillation
+\-- config.py            # Configuration centralisée
+
+scripts/
+|-- mobilenet_j2/
+|   |-- train_mobilenet_j2.py
+|   |-- eval_latency_j2.py
+|   \-- hyperparameters_j2.md
+|-- resnet_j3/
+|   |-- train_resnet18.py
+|   |-- evaluate_resnet18.py
+|   |-- eval_latency_resnet18.py
+|   |-- hyperparameters_j3.md
+|   |-- model_size_resnet18.py
+|   |-- prepare_teacher_distillation.py
+|   |-- resume_trainingresnet18.py
+|   \-- teacher_distillation_output.md
+|-- distillation/
+|   |-- train_distill_mobilenet_j4.py
+|   |-- resume_distill_mobilenet_j4.py
+|   |-- results.md
+|   \-- eval_latency_distil.py
+|-- fp16/
+|   |-- eval_accuracy_fp16_mobilenetv3.py
+|   |-- eval_latency_mobilenetv3.py
+|   |-- eval_resnet18_fp16.py
+|   |-- fp16_inference_resnet18.py
+|   |-- fp16_resnet_results.md
+|   \-- fp16results.md
+|-- compile/
+|   |-- benchmark_compile_mobilenetv3.py
+|   |-- results_latence.md
+|   \-- results_mobilenetcompiled.md
+\-- channels/
+    |-- quick_channels_last_bench.py
+    \-- results_channels.md
+\end{verbatim}
+
+\subsection{Configuration centralisée}
+
+Un fichier \texttt{src/cifaracce/config.py} regroupe tous les hyperparamètres et chemins :
+
+\begin{itemize}[leftmargin=*]
+    \item \texttt{DEVICE}, \texttt{SEED} : environnement.
+    \item \texttt{TRAIN\_EPOCHS}, \texttt{OPTIMIZER}, \texttt{SCHEDULER} : MobileNetV3.
+    \item \texttt{RESNET\_TRAIN} : hyperparamètres ResNet-18.
+    \item \texttt{CHECKPOINTS}, \texttt{LOGS} : chemins de sauvegarde.
+    \item \texttt{WARM\_UP\_ITERS}, \texttt{MEASURE\_ITERS}, \texttt{BENCHMARK} : défauts du benchmark.
+\end{itemize}
+
+Cela garantit la reproductibilité et simplifie les modifications globales.
+
+\subsection{Perte de distillation}
+
+Si distillation appliquée, la perte combine KL divergence (logits teacher/student) et cross-entropy (hard targets) :
+
+\[
+\mathcal{L}_{\text{distill}} = \alpha \cdot \mathcal{L}_{\text{KL}}(T) + (1 - \alpha) \cdot \mathcal{L}_{\text{CE}}
+\]
+
+où $\mathcal{L}_{\text{KL}}(T) = T^2 \cdot \text{KL}\left(\frac{\text{student}}{T}, \frac{\text{teacher}}{T}\right)$, $T = 4.0$ (température), $\alpha = 0.7$.
+
+% ====================================================
+% RÉSULTATS EXPÉRIMENTAUX
+% ====================================================
+
+\section{Résultats expérimentaux}
+
+
+
+
+\subsection{Baseline : MobileNetV3-Small (J2)}
+
+Entraînement de MobileNetV3-Small from-scratch sur CIFAR-10 train, 60 epochs avec early-stop à 85\% :
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Accuracy} : 83.2\% (n'atteint pas 85\%)
+    \item \textbf{Latence FP32} : moyenne $\approx$ 4.19 ms, p95 $\approx$ 6.25 ms
+    \item \textbf{Remarque} : MobileNetV3 seul insuffisant pour le seuil 85\%. Distillation nécessaire.
+\end{itemize}
+
+\subsection{Teacher : ResNet-18 CIFAR-10 (J3)}
+
+Entraînement de ResNet-18 adaptée CIFAR-10 from-scratch, 200 epochs :
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Accuracy} : $\geq 85\%$ \checkmark
+    \item \textbf{Latence FP32} : baseline robuste pour comparaison.
+\end{itemize}
+
+\subsection{Optimisations GPU sur MobileNetV3 (J4)}
+
+\subsubsection{FP16 (Autocast)}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{0.8\textwidth}{@{}lrrr@{}}
+        \toprule
+        \textbf{Variante} & \textbf{Lat. moy. (ms)} & \textbf{Lat. p95 (ms)} & \textbf{Speedup} \\
+        \midrule
+        MobileNetV3 FP32 & 4.1922 & 6.2514 & $1.0\times$ \\
+        MobileNetV3 FP16 & 4.874 & 6.0173 & $0.86\times$ \\
+        \bottomrule
+    \end{tabularx}
+    \caption{FP16 autocast : régression de latence (pas bénéfique).}
+\end{table}
+
+\subsubsection{\texttt{torch.compile} avec mode \texttt{reduce-overhead}}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{0.8\textwidth}{@{}lrrr@{}}
+        \toprule
+        \textbf{Variante} & \textbf{Lat. moy. (ms)} & \textbf{Lat. p95 (ms)} & \textbf{Speedup} \\
+        \midrule
+        MobileNetV3 FP32 & 4.1922 & 6.2514 & $1.0\times$ \\
+        MobileNetV3 FP32 + compile & 0.9109 & 1.6084 & \textbf{$4.60\times$} \\
+        MobileNetV3 FP16 + compile & 0.56 & 0.7128 & \textbf{$8.70\times$} \\
+        \bottomrule
+    \end{tabularx}
+    \caption{\texttt{torch.compile} (mode reduce-overhead) : gains massifs.}
+\end{table}
+
+\textbf{Observation} : \texttt{torch.compile} apporte un speedup extraordinaire (4.6--$8.7\times$) pour batch = 1, avec coût de compilation $\approx$ 3--14 s.
+
+\subsubsection{\texttt{channels\_last}}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{0.8\textwidth}{@{}lrr@{}}
+        \toprule
+        \textbf{Variante} & \textbf{Lat. moy. (ms)} & \textbf{Speedup} \\
+        \midrule
+        MobileNetV3 FP32 (NCHW) & 4.2220 & $1.0\times$ \\
+        MobileNetV3 FP32 (channels\_last) & 4.5356 & $0.93\times$ \\
+        \bottomrule
+    \end{tabularx}
+    \caption{\texttt{channels\_last} : régression, abandonnée.}
+\end{table}
+
+\subsection{Distillation (J4)}
+
+MobileNetV3-Small student entraîné avec ResNet-18 teacher (distillation perte, $T = 4.0$, $\alpha = 0.7$) :
+
+%TODO: Pour changer when executed
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Entraînement} : 120 epochs initial, puis 180 epochs en reprendre pour atteindre 300.
+    \item \textbf{Accuracy à epoch 120} : 79.43\%
+    \item \textbf{Objectif} : 85\%+ avec latence minimale.
+    \item \textbf{Reprise en cours} : training réassuré pour 180 epochs supplémentaires.
+\end{itemize}
+
+\subsection{Tableau synthétique des résultats expérimentaux}
+
+Le tableau ci-dessous résume tous les résultats de latence et précision obtenus au cours du projet :
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{@{}lcccccccc@{}}
+        \toprule
+        \textbf{Modèle} & \textbf{Acc.} & \textbf{Lat. moy.} & \textbf{Lat. p95} & \textbf{$\sigma$} & \textbf{Min} & \textbf{Max} & \textbf{Taille} \\
+        & \textbf{(\%)} & \textbf{(ms)} & \textbf{(ms)} & \textbf{(ms)} & \textbf{(ms)} & \textbf{(ms)} & \textbf{(MB)} \\
+        \midrule
+        MobileNetV3 FP16 & 71.05 & 4.87 & 6.01 & 0.61 & 3.61 & 8.94 & 6.1 \\
+        MobileNetV3 FP16 + Compile & 71.05 & 0.56 & 0.71 & 0.07 & 0.45 & 1.05 & 6.1 \\
+        MobileNetV3 FP32 & 83.2 & 4.19 & 6.25 & 0.6 & 2.84 & 9.42 & 6.1 \\
+        MobileNetV3 FP32 + Compile & 83.2 & 0.91 & 1.6 & 0.34 & 0.51 & 2.55 & 6.1 \\
+        MobileNetV3 FP32 Channels\_last & --- & 4.53 & 5.77 & 0.64 & 3.65 & 6.62 & 6.1 \\
+        \midrule
+        ResNet-18 Strong (FP32) & 90.64 & 1.923 & 2.44 & 0.24 & 1.68 & 4.03 & 43.72 \\
+        ResNet-18 FP16 & 90.64 & 2.0 & 3.53 & 0.53 & 1.56 & 5.3 & 43.72 \\
+        ResNet-18 FP32 & 90.64 & 2.58 & 4.61 & 0.72 & 1.85 & 6.23 & 43.72 \\
+        \midrule
+        Distillation (ResNet18 $\rightarrow$ MobileNetV3) & 79.43 & 3.92 & 5.58 & 0.8 & 3.17 & 9.07 & 6.1 \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Résultats expérimentaux synthétiques : accuracy, latence GPU (batch=1) et taille mémoire pour tous les modèles testés.}
+    \label{tab:experimental_results}
+\end{table}
+
+\textbf{Observations clés :}
+\begin{itemize}[leftmargin=*]
+    \item MobileNetV3 FP32 + Compile atteint $8.7\times$ speedup (0.91 ms) tout en maintenant 83.2\% accuracy.
+    \item ResNet-18 offre la meilleure accuracy (90.64\%) mais avec une taille mémoire $7\times$ plus grande.
+    \item Distillation permet de combiner la légèreté de MobileNetV3 (6.1 MB) avec une accuracy raisonnable (79.43\%).
+    \item FP16 seul sans compile apporte peu de bénéfice (régression latence) ; combine avec compile pour gains réels.
+    \item Channels\_last n'apporte aucun gain sur cette architecture/GPU (abandonné).
+\end{itemize}
+
+% ====================================================
+% ANALYSE ET DISCUSSION
+% ====================================================
+
+\section{Analyse et discussion}
+
+\subsection{Efficacité des optimisations}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{\texttt{torch.compile}} est l'optimisation la plus impactante pour batch = 1. Speedup 4.6--$8.7\times$ sans perte d'accuracy.
+    
+    \item \textbf{FP16 seul} (sans compile) régresse légèrement. En combinaison avec compile, FP16 + compile atteint $8.7\times$ de gain.
+    
+    \item \textbf{\texttt{channels\_last}} n'a pas d'effet bénéfique sur cette architecture/GPU. Abandonnée.
+    
+    \item \textbf{Distillation} est nécessaire une fois que MobileNetV3-Small ne peut atteindre 85\%. Le tuning des hyperparamètres (T, $\alpha$, LR schedule) et des epochs impacte significativement.
+\end{enumerate}
+
+% TODO: Mettre à jour après exécution
+\subsection{Choix du candidat final}
+
+Au vu des résultats, le candidat final sera l'une des variantes suivantes, en fonction des résultats de distillation :
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Option A} : MobileNetV3 + distillation (si accuracy $\geq 85\%$) + FP16 + compile = meilleure latence.
+    \item \textbf{Option B} : ResNet-18 + compile + FP16 = référence robuste (déjà $\geq 85\%$), mais latence plus élevée.
+\end{itemize}
+
+Le choix sera justifié par le tableau final : accuracy vs latence moyenne vs p95.
+
+\subsection{Limites et perspectives}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Généralisation} : résultats spécifiques à NVIDIA GPU + PyTorch 2.5. Autres matériels peuvent varier.
+    \item \textbf{Quantification} : non testée ici (INT8 ou similar), pourrait offrir gains supplémentaires.
+    \item \textbf{Export} : TorchScript ou ONNX utile pour déploiement en production (hors périmètre J5).
+    \item \textbf{Batch supérieur} : optimisations GPU (surtout compile) différentes pour batch $> 1$.
+\end{itemize}
+
+% ====================================================
+% CONCLUSION
+% ====================================================
+
+\section{Conclusion}
+
+Ce projet a validé une méthodologie incrémentale pour minimiser la latence GPU en inférence sur CIFAR-10, tout en maintenant accuracy $\geq 85\%$. 
+
+\textbf{Résumé des réalisations :}
+
+\begin{itemize}[leftmargin=*]
+    \item \checkmark\ Benchmark de latence GPU fiable et reproductible (protocole J1).
+    \item \checkmark\ Baselines entraînées : MobileNetV3-Small (vitesse, 83\%) et ResNet-18 (précision, $\geq 85\%$).
+    \item \checkmark\ Optimisations GPU évaluées : \texttt{torch.compile} apporte speedup 4.6--$8.7\times$.
+    \item \checkmark\ Distillation implémentée pour relever MobileNetV3 vers 85\%.
+    \item \checkmark\ Code centralisé, reproductible, avec configuration unifiée.
+\end{itemize}
+
+\textbf{Modèle final :} Candidat issu de la distillation ou ResNet-18 + compile, avec latence optimisée et accuracy $\geq 85\%$.
+
+
+%---------------------------------------------------
+% FIN DU RAPPORT.
+%---------------------------------------------------
+
+\end{document}

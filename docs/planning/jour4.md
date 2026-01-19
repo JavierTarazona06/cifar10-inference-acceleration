@@ -193,11 +193,11 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ## ✅ Critères d'acceptation J4
 
-- [ ] FP16 testé et mesuré sur les deux modèles
-- [ ] torch.compile testé (ou documenté si instable)
-- [ ] channels_last testé (décision prise)
-- [ ] Distillation réalisée si nécessaire
-- [ ] Tableau comparatif complet (toutes variantes)
+- [X] FP16 testé et mesuré sur les deux modèles
+- [X] torch.compile testé (ou documenté si instable)
+- [X] channels_last testé (décision prise)
+- [X] Distillation réalisée si nécessaire
+- [X] Tableau comparatif complet (toutes variantes)
 - [ ] **Candidat final sélectionné** (meilleur compromis)
 
 ---
