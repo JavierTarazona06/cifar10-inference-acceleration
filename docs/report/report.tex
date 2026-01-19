@@ -277,6 +277,24 @@ Le protocole de latence GPU est défini une fois pour J1 et appliqué systémati
 
 \section{Architecture et implémentation}
 
+\subsection{Code source et reproductibilité}
+
+Le code complet du projet est disponible sur GitHub à l'adresse suivante :
+
+\begin{center}
+\url{https://github.com/JavierTarazona06/cifar10-inference-acceleration.git}
+\end{center}
+
+Les instructions détaillées pour l'installation des dépendances et l'exécution des différents scripts sont fournies dans le fichier \texttt{README.md} du dépôt. Ce fichier contient :
+
+\begin{itemize}[leftmargin=*]
+    \item Les prérequis système (Python, CUDA, PyTorch).
+    \item Les commandes d'installation des packages nécessaires.
+    \item Les instructions pour exécuter l'entraînement des modèles.
+    \item Les commandes pour reproduire les benchmarks de latence.
+    \item La structure complète du projet et l'organisation du code.
+\end{itemize}
+
 \subsection{Structure du code}
 
 \begin{verbatim}
@@ -434,7 +452,7 @@ Entraînement de ResNet-18 adaptée CIFAR-10 from-scratch, 200 epochs :
 
 MobileNetV3-Small student entraîné avec ResNet-18 teacher (distillation perte, $T = 4.0$, $\alpha = 0.7$) :
 
-%TODO: Pour changer when executed
+%TODO: To change when executed, the final distillation
 \begin{itemize}[leftmargin=*]
     \item \textbf{Entraînement} : 120 epochs initial, puis 180 epochs en reprendre pour atteindre 300.
     \item \textbf{Accuracy à epoch 120} : 79.43\%
@@ -537,6 +555,7 @@ Ce projet a validé une méthodologie incrémentale pour minimiser la latence GP
     \item \checkmark\ Code centralisé, reproductible, avec configuration unifiée.
 \end{itemize}
 
+%TODO: To change when executed, the final distillation
 \textbf{Modèle final :} Candidat issu de la distillation ou ResNet-18 + compile, avec latence optimisée et accuracy $\geq 85\%$.
 
 
