@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from cifaracce.data import test_loader
 from cifaracce.models.resnet18 import ResNet18
 from cifaracce.utils.seed import set_seed
+from cifaracce import config as cfg
 
 
 def benchmark_latency(model, test_loader, device, num_warmup=100, num_runs=1000):
@@ -81,17 +82,17 @@ def benchmark_latency(model, test_loader, device, num_warmup=100, num_runs=1000)
 
 
 def main():
-    set_seed(42)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    set_seed(cfg.SEED)
+    device = cfg.DEVICE
     print(f"Using device: {device}\n")
     
     if device == "cpu":
         print("⚠ Warning: GPU not available, using CPU (latency measurements will be slower)")
     
     # Load checkpoint
-    checkpoint_path = Path("checkpoints/resnet18/resnet18_cifar_best.pth")
+    checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_cifar_best.pth"
     if not checkpoint_path.exists():
-        checkpoint_path = Path("checkpoints/resnet18/resnet18_best.pt")
+        checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_best.pt"
     
     if not checkpoint_path.exists():
         print(f"✗ Checkpoint not found")
@@ -114,7 +115,9 @@ def main():
     print("=" * 60 + "\n")
     
     # Run benchmark
-    latencies = benchmark_latency(model, test_loader, device, num_warmup=100, num_runs=1000)
+    warmup = cfg.RESNET_LATENCY.get('warmup_iters', 100)
+    runs = cfg.RESNET_LATENCY.get('measure_iters', 1000)
+    latencies = benchmark_latency(model, test_loader, device, num_warmup=warmup, num_runs=runs)
     
     # Calculate statistics (in milliseconds)
     mean_latency = np.mean(latencies)

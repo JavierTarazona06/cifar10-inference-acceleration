@@ -9,7 +9,7 @@ Finaliser les livrables, assurer la reproductibilité et rédiger la narration d
 
 ### 🧹 Nettoyage et organisation du code
 
-- [ ] **J5-01** | Structurer les scripts Python
+- [X] **J5-01** | Structurer les scripts Python
   - **Description** :
     - `train.py` — Entraînement des modèles
     - `eval.py` — Évaluation accuracy sur test
@@ -18,7 +18,7 @@ Finaliser les livrables, assurer la reproductibilité et rédiger la narration d
   - **Labels** : `code`, `organisation`
   - **Priorité** : 🔴 Haute
 
-- [ ] **J5-02** | Nettoyer les notebooks
+- [X] **J5-02** | Nettoyer les notebooks
   - **Description** :
     - Supprimer les cellules de debug/test
     - Ajouter des commentaires explicatifs

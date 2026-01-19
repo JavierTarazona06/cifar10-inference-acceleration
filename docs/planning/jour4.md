@@ -163,7 +163,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ### 📊 Synthèse et décision
 
-- [ ] **J4-18** | Mettre à jour le tableau comparatif
+- [X] **J4-18** | Mettre à jour le tableau comparatif
   - **Description** : Ajouter toutes les variantes testées
     | ID | Variante | Acc. (%) | Lat. moy. (ms) | Lat. p95 (ms) | Taille (MB) |
     |----|----------|----------|----------------|---------------|-------------|

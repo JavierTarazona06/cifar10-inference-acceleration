@@ -9,6 +9,10 @@ from time import perf_counter
 from datetime import datetime
 from pathlib import Path
 from contextlib import nullcontext
+try:
+    from cifaracce import config as cfg
+except Exception:
+    cfg = None
 
 # ========================================================================
 # BENCHMARK LATENCY MODULE
@@ -27,8 +31,8 @@ from contextlib import nullcontext
 # Key function: benchmark_latency() gives you precise inference times.
 # ========================================================================
 
-WARM_UP_ITERS = 50
-MEASURE_ITERS = 500
+WARM_UP_ITERS = cfg.WARM_UP_ITERS if cfg else 50
+MEASURE_ITERS = cfg.MEASURE_ITERS if cfg else 500
 
 # ------------------------------- #
 # Benchmark Accuracy
