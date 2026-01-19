@@ -25,6 +25,7 @@ from cifaracce.data import train_loader, test_loader
 from cifaracce.models.mobileNet import MobileNetV3Small
 from cifaracce.models.resnet18 import ResNet18
 from cifaracce.utils import set_seed, distillation_loss
+from cifaracce import config as cfg
 
 
 def load_teacher(ckpt_path: Path, device: str) -> torch.nn.Module:
@@ -78,7 +79,7 @@ def train(args):
 
     best_acc = 0.0
     best_epoch = 0
-    ckpt_dir = Path("checkpoints/distill")
+    ckpt_dir = cfg.CHECKPOINTS['distill_dir']
     ckpt_dir.mkdir(parents=True, exist_ok=True)
 
     for epoch in range(1, args.epochs + 1):
@@ -129,17 +130,35 @@ def train(args):
             f"Epoch {epoch:03d}/{args.epochs} | "
             f"TrainLoss {train_loss:.4f} (CE {ce_loss:.4f}, KL {kl_loss:.4f}) | "
             f"TrainAcc {train_acc:6.2f}% | TestAcc {test_acc:6.2f}% | "
-            f"LR {scheduler.get_last_lr()[0]:.5f}"
-        )
+            f"LR {scheduler.get_last_lr()[0]:.5f}", end="")
 
-        # Save best
+        # Save best (with full checkpoint for resuming)
         if test_acc > best_acc:
             best_acc = test_acc
             best_epoch = epoch
-            torch.save(student.state_dict(), ckpt_dir / "mobilenetv3_best.pt")
+            checkpoint_dict = {
+                "epoch": epoch,
+                "model_state_dict": student.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "scheduler_state_dict": scheduler.state_dict(),
+                "best_acc": best_acc,
+                "loss": train_loss,
+            }
+            torch.save(checkpoint_dict, ckpt_dir / "mobilenetv3_best.pt")
+            print(" ← NEW BEST")
+        else:
+            print()
 
-    # Save last
-    torch.save(student.state_dict(), ckpt_dir / "mobilenetv3_last.pt")
+    # Save last (with full checkpoint for resuming)
+    checkpoint_dict = {
+        "epoch": epoch,
+        "model_state_dict": student.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
+        "best_acc": best_acc,
+        "loss": train_loss,
+    }
+    torch.save(checkpoint_dict, ckpt_dir / "mobilenetv3_last.pt")
     print("\nTraining finished")
     print(f"Best acc: {best_acc:.2f}% (epoch {best_epoch})")
     print(f"Checkpoints: {ckpt_dir}")
