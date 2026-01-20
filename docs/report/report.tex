@@ -79,7 +79,7 @@
 % ----------------------------------------------------
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{ENSTA Paris}
+\fancyhead[L]{ENSTA}
 \fancyhead[R]{Projet : CIFAR10 Inference Acceleration}
 \fancyfoot[C]{\thepage}
 
@@ -452,12 +452,11 @@ Entraînement de ResNet-18 adaptée CIFAR-10 from-scratch, 200 epochs :
 
 MobileNetV3-Small student entraîné avec ResNet-18 teacher (distillation perte, $T = 4.0$, $\alpha = 0.7$) :
 
-%TODO: To change when executed, the final distillation
 \begin{itemize}[leftmargin=*]
     \item \textbf{Entraînement} : 120 epochs initial, puis 180 epochs en reprendre pour atteindre 300.
     \item \textbf{Accuracy à epoch 120} : 79.43\%
     \item \textbf{Objectif} : 85\%+ avec latence minimale.
-    \item \textbf{Reprise en cours} : training réassuré pour 180 epochs supplémentaires.
+    \item \textbf{Résultat} : 78.84\% d'accuracy en epoch 192 (abandonné).
 \end{itemize}
 
 \subsection{Tableau synthétique des résultats expérimentaux}
@@ -516,17 +515,16 @@ Le tableau ci-dessous résume tous les résultats de latence et précision obten
     \item \textbf{Distillation} est nécessaire une fois que MobileNetV3-Small ne peut atteindre 85\%. Le tuning des hyperparamètres (T, $\alpha$, LR schedule) et des epochs impacte significativement.
 \end{enumerate}
 
-% TODO: Mettre à jour après exécution
 \subsection{Choix du candidat final}
 
-Au vu des résultats, le candidat final sera l'une des variantes suivantes, en fonction des résultats de distillation :
+La distillation la mieux entraînée n'a atteint que 79.43\% d'accuracy (objectif 85\% non atteint). Le choix final retient donc la variante la plus précise avec latence maîtrisée :
 
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Option A} : MobileNetV3 + distillation (si accuracy $\geq 85\%$) + FP16 + compile = meilleure latence.
-    \item \textbf{Option B} : ResNet-18 + compile + FP16 = référence robuste (déjà $\geq 85\%$), mais latence plus élevée.
+    \item \textbf{Option A} (MobileNetV3 + distillation) : écart à l'objectif (79.43\%), écartée.
+    \item \textbf{Option B} (retenue) : ResNet-18 + FP16 + \texttt{torch.compile}, accuracy $\approx 90\%$ et latence réduite (\textit{p95} $\approx$ 2--3 ms selon mesures compile/FP16), tout en restant reproductible.
 \end{itemize}
 
-Le choix sera justifié par le tableau final : accuracy vs latence moyenne vs p95.
+Le tableau final (accuracy vs latence moyenne vs p95) justifie la sélection d'Option B comme candidat livré.
 
 \subsection{Limites et perspectives}
 
@@ -555,8 +553,7 @@ Ce projet a validé une méthodologie incrémentale pour minimiser la latence GP
     \item \checkmark\ Code centralisé, reproductible, avec configuration unifiée.
 \end{itemize}
 
-%TODO: To change when executed, the final distillation
-\textbf{Modèle final :} Candidat issu de la distillation ou ResNet-18 + compile, avec latence optimisée et accuracy $\geq 85\%$.
+\textbf{Modèle final :} Candidat ResNet-18 + compile, avec latence optimisée et accuracy $\geq 85\%$.
 
 
 %---------------------------------------------------

@@ -117,9 +117,9 @@ def load_student(device: str):
             model.load_state_dict(state["model_state_dict"])  # for completeness
         else:
             model.load_state_dict(state)
-        print("✓ Model weights loaded")
+        print(" Model weights loaded")
     else:
-        print("⚠ No checkpoint found, using random-initialized weights (latency only)")
+        print(" No checkpoint found, using random-initialized weights (latency only)")
 
     return model
 
@@ -134,7 +134,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}\n")
     if device == "cpu":
-        print("⚠ Warning: GPU not available, FP16 will fall back to FP32 on CPU")
+        print(" Warning: GPU not available, FP16 will fall back to FP32 on CPU")
 
     model = load_student(device)
 

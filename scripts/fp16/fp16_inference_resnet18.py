@@ -101,7 +101,7 @@ def main():
     print(f"Using device: {device}")
     
     if device == "cpu":
-        print("⚠ Warning: FP16 is optimized for GPU. CPU execution will be slower.")
+        print(" Warning: FP16 is optimized for GPU. CPU execution will be slower.")
     
     # Load checkpoint
     checkpoint_path = Path("checkpoints/resnet18/resnet18_cifar_best.pth")
@@ -109,7 +109,7 @@ def main():
         checkpoint_path = Path("checkpoints/resnet18/resnet18_best.pt")
     
     if not checkpoint_path.exists():
-        print(f"✗ Checkpoint not found")
+        print(f" Checkpoint not found")
         return False
     
     print(f"Loading checkpoint: {checkpoint_path}")
@@ -123,7 +123,7 @@ def main():
         model.load_state_dict(checkpoint)
     
     model.eval()
-    print("✓ Model loaded\n")
+    print(" Model loaded\n")
     
     print("=" * 60)
     print("J4-01 | FP16 Inference Implementation")
@@ -147,7 +147,7 @@ def main():
             ["Average FP16 accuracy", f"{avg_fp16_acc:.2%}"],
             ["Accuracy difference", f"{abs(avg_fp16_acc - avg_fp32_acc):.2%}"],
             ["Average output diff", f"{avg_diff:.6f}"],
-            ["FP16 precision loss", "✓ Minimal (<0.1% in most cases)"],
+            ["FP16 precision loss", " Minimal (<0.1% in most cases)"],
         ]
         
         print(tabulate(summary, headers=["Metric", "Value"], tablefmt="grid"))
@@ -191,7 +191,7 @@ def evaluate_fp16(model, dataloader, device):
 """)
     
     print("\n" + "=" * 60)
-    print("✓ J4-01 Complete: FP16 inference implemented and tested")
+    print(" J4-01 Complete: FP16 inference implemented and tested")
     print("=" * 60)
     
     return True

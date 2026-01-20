@@ -2,7 +2,7 @@
 Using device: cuda
 
 Loading checkpoint: checkpoints/mobilenetv3/mobilenetv3_best.pt
-✓ Weights loaded
+ Weights loaded
 
 == Baseline (uncompiled) ==
 
@@ -79,7 +79,7 @@ COMPARISON: Uncompiled vs Compiled (FP32/FP16)
 Using device: cuda
 
 Loading checkpoint: checkpoints/mobilenetv3/mobilenetv3_best.pt
-✓ Weights loaded
+ Weights loaded
 
 == Baseline (uncompiled) ==
 /home/javit/cifar10-inference-acceleration/scripts/compile/benchmark_compile_mobilenetv3.py:37: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.

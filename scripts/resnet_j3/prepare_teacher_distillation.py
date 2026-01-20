@@ -180,7 +180,7 @@ def generate_teacher_predictions(model, test_loader, device, num_samples=1000):
     # Calculate accuracy
     accuracy = (hard_labels_tensor == targets_tensor).float().mean()
     
-    print(f"\n✓ Generated predictions for {soft_labels_tensor.shape[0]} test samples")
+    print(f"\n Generated predictions for {soft_labels_tensor.shape[0]} test samples")
     print(f"  Soft labels shape: {soft_labels_tensor.shape}")
     print(f"  Teacher accuracy: {accuracy:.2%}")
     
@@ -204,12 +204,12 @@ def main():
     print("Step 1: Verify Checkpoint")
     print("-" * 60)
     valid, message = verify_checkpoint(checkpoint_path)
-    print(f"Status: {'✓ PASS' if valid else '✗ FAIL'}")
+    print(f"Status: {' PASS' if valid else ' FAIL'}")
     print(f"Details: {message}")
     print(f"Path: {checkpoint_path}\n")
     
     if not valid:
-        print("✗ Checkpoint verification failed!")
+        print(" Checkpoint verification failed!")
         return False
     
     # Step 2: Load model
@@ -217,7 +217,7 @@ def main():
     print("-" * 60)
     try:
         model, best_acc, epoch = load_teacher(checkpoint_path, device)
-        print("✓ Model loaded successfully")
+        print(" Model loaded successfully")
         print(f"  Model class: {model.__class__.__name__}")
         
         # Count parameters
@@ -230,7 +230,7 @@ def main():
             print(f"  Trained for {epoch} epochs")
         print()
     except Exception as e:
-        print(f"✗ Failed to load model: {e}")
+        print(f" Failed to load model: {e}")
         return False
     
     # Step 3: Test soft label generation
@@ -238,9 +238,9 @@ def main():
     print("-" * 60)
     try:
         test_soft_label_generation(model, test_loader, device, num_batches=2)
-        print("✓ Soft label generation working correctly")
+        print(" Soft label generation working correctly")
     except Exception as e:
-        print(f"✗ Soft label generation failed: {e}")
+        print(f" Soft label generation failed: {e}")
         return False
     
     # Step 4: Generate predictions
@@ -250,9 +250,9 @@ def main():
         soft_labels, hard_labels, targets = generate_teacher_predictions(
             model, test_loader, device, num_samples=1000
         )
-        print("✓ Predictions generated successfully\n")
+        print(" Predictions generated successfully\n")
     except Exception as e:
-        print(f"✗ Prediction generation failed: {e}")
+        print(f" Prediction generation failed: {e}")
         return False
     
     # Summary
@@ -261,14 +261,14 @@ def main():
     print("=" * 60 + "\n")
     
     summary = [
-        ["Checkpoint exists", "✓ Yes"],
-        ["Checkpoint format", "✓ Valid"],
-        ["Model loads", "✓ Yes"],
-        ["Parameters", f"✓ {total_params / 1e6:.2f}M"],
-        ["Soft labels generation", "✓ Working"],
-        ["Predictions on test set", "✓ Generated"],
+        ["Checkpoint exists", " Yes"],
+        ["Checkpoint format", " Valid"],
+        ["Model loads", " Yes"],
+        ["Parameters", f" {total_params / 1e6:.2f}M"],
+        ["Soft labels generation", " Working"],
+        ["Predictions on test set", " Generated"],
         ["Temperature (distillation)", "4.0"],
-        ["Ready for J4 distillation", "✓ YES"],
+        ["Ready for J4 distillation", " YES"],
     ]
     
     print(tabulate(summary, headers=["Check", "Status"], tablefmt="grid"))

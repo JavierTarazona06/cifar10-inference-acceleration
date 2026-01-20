@@ -25,7 +25,7 @@ def evaluate_checkpoint(checkpoint_path, device):
     """Load checkpoint and evaluate on CIFAR-10 test set."""
     
     if not checkpoint_path.exists():
-        print(f"✗ Checkpoint not found: {checkpoint_path}")
+        print(f" Checkpoint not found: {checkpoint_path}")
         return None
     
     print(f"Loading checkpoint: {checkpoint_path}")
@@ -88,7 +88,7 @@ def main():
     if not checkpoint_path.exists():
         old_checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_best.pt"
         if old_checkpoint_path.exists():
-            print(f"⚠ New checkpoint not found, using old format: {old_checkpoint_path}\n")
+            print(f" New checkpoint not found, using old format: {old_checkpoint_path}\n")
             checkpoint_path = old_checkpoint_path
     
     print("=" * 60)
@@ -98,7 +98,7 @@ def main():
     result = evaluate_checkpoint(checkpoint_path, device)
     
     if result is None:
-        print("✗ Evaluation failed")
+        print(" Evaluation failed")
         return
     
     test_acc, epoch, training_best_acc = result
@@ -109,7 +109,7 @@ def main():
         ["Accuracy (training log)", f"{training_best_acc:.2f}%" if training_best_acc is not None else "N/A"],
         ["Accuracy (test eval)", f"{test_acc:.2f}%"],
         ["Target accuracy", f"{cfg.RESNET_TRAIN['target_acc']:.2f}%"],
-        ["Status", "✓ PASS" if test_acc >= cfg.RESNET_TRAIN['target_acc'] else "✗ FAIL"],
+        ["Status", " PASS" if test_acc >= cfg.RESNET_TRAIN['target_acc'] else " FAIL"],
     ]
     
     print("\n" + "=" * 60)
@@ -123,18 +123,18 @@ def main():
     if test_acc >= 85.0:
         if training_best_acc is not None:
             gap = test_acc - training_best_acc
-            print(f"  ✓ Target accuracy ≥85% ACHIEVED: {test_acc:.2f}%")
+            print(f"   Target accuracy ≥85% ACHIEVED: {test_acc:.2f}%")
             if abs(gap) < 0.5:
-                print(f"  ✓ No gap between training and test (gap: {gap:.2f}%)")
+                print(f"   No gap between training and test (gap: {gap:.2f}%)")
             elif gap > 0:
-                print(f"  ⚠ Test accuracy slightly higher than training (gap: {gap:.2f}%)")
+                print(f"   Test accuracy slightly higher than training (gap: {gap:.2f}%)")
             else:
-                print(f"  ⚠ Overfitting detected (gap: {gap:.2f}%)")
+                print(f"   Overfitting detected (gap: {gap:.2f}%)")
         else:
-            print(f"  ✓ Target accuracy ≥85% ACHIEVED: {test_acc:.2f}%")
+            print(f"   Target accuracy ≥85% ACHIEVED: {test_acc:.2f}%")
     else:
         gap = 85.0 - test_acc
-        print(f"  ✗ Target accuracy NOT achieved: {test_acc:.2f}% (need {gap:.2f}% more)")
+        print(f"   Target accuracy NOT achieved: {test_acc:.2f}% (need {gap:.2f}% more)")
     
     print("\n" + "=" * 60)
     print("Teacher ResNet-18 ready for J4 (Distillation)" if test_acc >= 85.0 else "Teacher needs improvement")

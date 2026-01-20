@@ -117,7 +117,7 @@ Réduire la latence sans dégrader la précision en dessous de 85%.
 
 ### 🎓 I4 — Distillation (optionnelle)
 
-> ⚠️ **Condition** : Exécuter cette section uniquement si le modèle léger < 85% accuracy
+> ️ **Condition** : Exécuter cette section uniquement si le modèle léger < 85% accuracy
 
 - [X] **J4-14** | Implémenter la perte de distillation
   - **Description** :

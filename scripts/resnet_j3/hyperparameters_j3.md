@@ -232,7 +232,7 @@ Based on standard ResNet-18 CIFAR-10 configuration:
 
 | Metric | Expected Value | Success Criterion |
 |--------|---|---|
-| **Test Accuracy** | 93-95% | ≥85% ✓ |
+| **Test Accuracy** | 93-95% | ≥85%  |
 | **Mean Latency (FP32, B=1)** | 4-6 ms | < 10 ms |
 | **Parameters** | 11.17M | ~11M |
 | **Checkpoint size** | 42-45 MB | < 100 MB |

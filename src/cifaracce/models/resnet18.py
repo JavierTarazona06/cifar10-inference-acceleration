@@ -39,7 +39,7 @@ if __name__ == "__main__":
     
     # Validation checks
     assert output.shape == (1, 10), f"Expected output shape (1, 10), got {output.shape}"
-    print("✓ Output shape is correct: (1, 10)")
+    print(" Output shape is correct: (1, 10)")
     
     # Test with multiple batch sizes
     for batch_size in [1, 4, 8, 16, 32]:
@@ -47,7 +47,7 @@ if __name__ == "__main__":
         with torch.no_grad():
             output = model(dummy_input)
         assert output.shape == (batch_size, 10), f"Batch {batch_size}: Expected shape ({batch_size}, 10), got {output.shape}"
-        print(f"✓ Batch size {batch_size}: output shape {output.shape}")
+        print(f" Batch size {batch_size}: output shape {output.shape}")
     
     print("\n:) All forward pass tests passed!")
     print(f"\nModel architecture:\n{model}")
