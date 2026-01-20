@@ -86,7 +86,7 @@ def main():
 	print(f"Using device: {device}\n")
 
 	if device == "cpu":
-		print("⚠ Warning: GPU not available, using CPU (latency measurements will be slower)")
+		print(" Warning: GPU not available, using CPU (latency measurements will be slower)")
 
 	# Load distilled student checkpoint
 	checkpoint_path = Path("checkpoints/distill/mobilenetv3_best.pt")
@@ -94,7 +94,7 @@ def main():
 		checkpoint_path = Path("checkpoints/distill/mobilenetv3_last.pt")
 
 	if not checkpoint_path.exists():
-		print("✗ Distilled student checkpoint not found")
+		print(" Distilled student checkpoint not found")
 		return
 
 	print(f"Loading checkpoint: {checkpoint_path}")
@@ -102,7 +102,7 @@ def main():
 
 	model = MobileNetV3Small(num_classes=10, device=device).to(device)
 	model.load_state_dict(checkpoint)
-	print("✓ Model loaded\n")
+	print(" Model loaded\n")
 
 	print("=" * 60)
 	print("J4 | Benchmark Latence GPU MobileNetV3 (Distilled, FP32)")

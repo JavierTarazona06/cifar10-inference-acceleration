@@ -132,7 +132,7 @@ def main():
             print(f"  -> Saved best checkpoint: {best_acc:.2f}%")
 
         if epoch >= early_stop_floor and test_acc >= target_acc:
-            print(f"✓ Early stop: test_acc {test_acc:.2f}% >= {target_acc:.1f}% at epoch {epoch}")
+            print(f" Early stop: test_acc {test_acc:.2f}% >= {target_acc:.1f}% at epoch {epoch}")
             break
 
     # Save last checkpoint with complete state

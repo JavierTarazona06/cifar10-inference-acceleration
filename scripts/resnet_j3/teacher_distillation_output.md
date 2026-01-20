@@ -6,13 +6,13 @@ J3-14 | Prepare Teacher for Distillation
 
 Step 1: Verify Checkpoint
 ------------------------------------------------------------
-Status: ✓ PASS
+Status:  PASS
 Details: Checkpoint format: OLD (state_dict only - compatible)
 Path: checkpoints\resnet18\resnet18_best.pt
 
 Step 2: Load Teacher Model
 ------------------------------------------------------------
-✓ Model loaded successfully
+ Model loaded successfully
   Model class: ResNet18
   Total parameters: 11,173,962 (11.17M)
 
@@ -87,7 +87,7 @@ Batch 2/2:
     - Sample soft label: tensor([0.0782, 0.0742, 0.0484, 0.0532, 0.0392, 0.0482, 0.0487, 0.0435, 0.5086,
         0.0577], device='cuda:0')
 
-✓ Soft label generation working correctly
+ Soft label generation working correctly
 
 Step 4: Generate Teacher Predictions
 ------------------------------------------------------------
@@ -106,10 +106,10 @@ Generating Teacher Predictions on Test Set
   Generated predictions for 800 samples...
   Generated predictions for 900 samples...
 
-✓ Generated predictions for 1000 test samples
+ Generated predictions for 1000 test samples
   Soft labels shape: torch.Size([1000, 10])
   Teacher accuracy: 90.50%
-✓ Predictions generated successfully
+ Predictions generated successfully
 
 
 ============================================================
@@ -119,21 +119,21 @@ TEACHER READINESS SUMMARY
 +----------------------------+-------------+
 | Check                      | Status      |
 +============================+=============+
-| Checkpoint exists          | ✓ Yes       |
+| Checkpoint exists          |  Yes       |
 +----------------------------+-------------+
-| Checkpoint format          | ✓ Valid     |
+| Checkpoint format          |  Valid     |
 +----------------------------+-------------+
-| Model loads                | ✓ Yes       |
+| Model loads                |  Yes       |
 +----------------------------+-------------+
-| Parameters                 | ✓ 11.17M    |
+| Parameters                 |  11.17M    |
 +----------------------------+-------------+
-| Soft labels generation     | ✓ Working   |
+| Soft labels generation     |  Working   |
 +----------------------------+-------------+
-| Predictions on test set    | ✓ Generated |
+| Predictions on test set    |  Generated |
 +----------------------------+-------------+
 | Temperature (distillation) | 4.0         |
 +----------------------------+-------------+
-| Ready for J4 distillation  | ✓ YES       |
+| Ready for J4 distillation  |  YES       |
 +----------------------------+-------------+
 
 ============================================================

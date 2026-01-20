@@ -37,7 +37,7 @@ def load_checkpoint(checkpoint_path, device):
     start_epoch = checkpoint["epoch"] + 1
     best_acc = checkpoint["best_acc"]
     
-    print(f"✓ Loaded checkpoint from epoch {checkpoint['epoch']}")
+    print(f" Loaded checkpoint from epoch {checkpoint['epoch']}")
     print(f"  Best acc so far: {best_acc:.2f}%")
     print(f"  Resuming from epoch {start_epoch}")
     
@@ -58,7 +58,7 @@ def main():
     
     checkpoint_path = Path(args.checkpoint)
     if not checkpoint_path.exists():
-        print(f"✗ Checkpoint not found: {checkpoint_path}")
+        print(f" Checkpoint not found: {checkpoint_path}")
         return
     
     model, optimizer, scheduler, start_epoch, best_acc = load_checkpoint(checkpoint_path, device)
@@ -139,7 +139,7 @@ def main():
             print(f"  -> Saved best checkpoint: {best_acc:.2f}%")
         
         if test_acc >= target_acc:
-            print(f"✓ Target accuracy {target_acc:.1f}% reached at epoch {epoch}!")
+            print(f" Target accuracy {target_acc:.1f}% reached at epoch {epoch}!")
             break
     
     checkpoint_last = {

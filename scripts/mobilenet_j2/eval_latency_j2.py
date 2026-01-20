@@ -24,9 +24,9 @@ checkpoint_path = "checkpoints/mobilenetv3/mobilenetv3_best.pt"
 if os.path.exists(checkpoint_path):
     state_dict = torch.load(checkpoint_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
-    print(f"✓ Loaded checkpoint from {checkpoint_path}")
+    print(f" Loaded checkpoint from {checkpoint_path}")
 else:
-    print(f"✗ Checkpoint not found at {checkpoint_path}")
+    print(f" Checkpoint not found at {checkpoint_path}")
     print("   Please run 'python train_mobilenet_j2.py' first.")
     exit(1)
 

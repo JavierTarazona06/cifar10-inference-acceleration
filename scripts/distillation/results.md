@@ -131,7 +131,7 @@ Checkpoints: checkpoints\distill
 Using device: cuda
 
 Loading checkpoint: checkpoints\distill\mobilenetv3_best.pt
-✓ Model loaded
+ Model loaded
 
 ============================================================
 J4 | Benchmark Latence GPU MobileNetV3 (Distilled, FP32)

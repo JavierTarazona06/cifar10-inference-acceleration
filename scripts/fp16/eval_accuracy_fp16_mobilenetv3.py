@@ -60,9 +60,9 @@ def load_student(device: str):
             model.load_state_dict(state["model_state_dict"])  # compatibility
         else:
             model.load_state_dict(state)
-        print("✓ Weights loaded")
+        print(" Weights loaded")
     else:
-        print("⚠ No checkpoint found — evaluating random weights (for demo only)")
+        print(" No checkpoint found — evaluating random weights (for demo only)")
 
     return model
 
@@ -77,7 +77,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}\n")
     if device == "cpu":
-        print("⚠ Running on CPU — FP16 autocast will behave like FP32.")
+        print(" Running on CPU — FP16 autocast will behave like FP32.")
 
     model = load_student(device)
 

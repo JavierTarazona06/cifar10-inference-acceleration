@@ -118,9 +118,9 @@ def load_student(device: str):
             model.load_state_dict(state["model_state_dict"])
         else:
             model.load_state_dict(state)
-        print("✓ Weights loaded")
+        print(" Weights loaded")
     else:
-        print("⚠ No checkpoint found, using random weights (latency only)")
+        print(" No checkpoint found, using random weights (latency only)")
     return model
 
 
@@ -159,16 +159,16 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}\n")
     if args.mode == "fp16" and device == "cpu":
-        print("⚠ FP16 requested but CUDA not available; results will behave like FP32 on CPU.")
+        print(" FP16 requested but CUDA not available; results will behave like FP32 on CPU.")
 
     # Quick guard for triton/inductor availability (common failure on Windows)
     try:
         import triton  # type: ignore
         _ = triton.__version__
     except Exception:
-        print("✗ torch.compile (inductor) requires Triton; not found or unsupported on this platform.")
-        print("  • If on Windows, run under WSL/Linux for inductor+Triton, or skip compile.")
-        print("  • Otherwise: pip install 'triton==2.1.0' (match your torch version).")
+        print(" torch.compile (inductor) requires Triton; not found or unsupported on this platform.")
+        print("  - If on Windows, run under WSL/Linux for inductor+Triton, or skip compile.")
+        print("  - Otherwise: pip install 'triton==2.1.0' (match your torch version).")
         return
 
     # Load model
@@ -190,8 +190,8 @@ def main():
     try:
         model_compiled = torch.compile(model, mode=args.compile_mode)
     except Exception as e:
-        print(f"✗ torch.compile failed: {e}")
-        print("  • Likely Triton/inductor unsupported or missing. Try running on Linux/WSL with CUDA")
+        print(f" torch.compile failed: {e}")
+        print("  - Likely Triton/inductor unsupported or missing. Try running on Linux/WSL with CUDA")
         print("    and matching triton version, or rerun with --skip-baseline to keep eager only.")
         return
 

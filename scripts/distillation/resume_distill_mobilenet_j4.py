@@ -58,7 +58,7 @@ def load_teacher(ckpt_path: Path, device: str) -> torch.nn.Module:
     model.eval()
     for p in model.parameters():
         p.requires_grad = False
-    print(f"✓ Loaded teacher from {ckpt_path}")
+    print(f" Loaded teacher from {ckpt_path}")
     return model
 
 
@@ -83,7 +83,7 @@ def resume_training(args):
     # Load best student checkpoint
     student_ckpt_path = Path(args.checkpoint)
     if not student_ckpt_path.exists():
-        print(f"✗ Student checkpoint not found: {student_ckpt_path}")
+        print(f" Student checkpoint not found: {student_ckpt_path}")
         return
 
     print(f"Loading student checkpoint: {student_ckpt_path}")
@@ -99,7 +99,7 @@ def resume_training(args):
         initial_epoch = 120  # assume checkpoint from epoch 120
         prev_best_acc = args.prev_best_acc if hasattr(args, 'prev_best_acc') else 0.0
 
-    print(f"✓ Student loaded (previous best acc: {prev_best_acc:.2f}%)\n")
+    print(f" Student loaded (previous best acc: {prev_best_acc:.2f}%)\n")
 
     # Load teacher
     teacher_ckpt = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_best.pt"
@@ -113,9 +113,9 @@ def resume_training(args):
     
     if isinstance(student_state, dict) and "optimizer_state_dict" in student_state:
         optimizer.load_state_dict(student_state["optimizer_state_dict"])
-        print(f"✓ Optimizer state loaded from checkpoint\n")
+        print(f" Optimizer state loaded from checkpoint\n")
     else:
-        print(f"⚠ Optimizer state not in checkpoint, starting fresh with lr={args.lr}\n")
+        print(f" Optimizer state not in checkpoint, starting fresh with lr={args.lr}\n")
 
     # Scheduler: load from checkpoint or create fresh
     # If resuming, create scheduler for the additional epochs starting fresh
@@ -126,9 +126,9 @@ def resume_training(args):
     if isinstance(student_state, dict) and "scheduler_state_dict" in student_state:
         try:
             scheduler.load_state_dict(student_state["scheduler_state_dict"])
-            print(f"✓ Scheduler state loaded from checkpoint\n")
+            print(f" Scheduler state loaded from checkpoint\n")
         except Exception as e:
-            print(f"⚠ Could not load scheduler state ({e}), starting fresh\n")
+            print(f" Could not load scheduler state ({e}), starting fresh\n")
 
     best_acc = prev_best_acc  # track best from this resume session
     best_epoch = initial_epoch
@@ -210,7 +210,7 @@ def resume_training(args):
 
         # Early exit if target reached
         if test_acc >= 85.0:
-            print(f"\n✓ Target accuracy {test_acc:.2f}% >= 85% REACHED at epoch {current_epoch}")
+            print(f"\n Target accuracy {test_acc:.2f}% >= 85% REACHED at epoch {current_epoch}")
             break
 
     # Save last

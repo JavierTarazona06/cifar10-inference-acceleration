@@ -127,7 +127,7 @@ def load_teacher(device: str):
     ckpt_path = next((p for p in ckpt_candidates if p.exists()), None)
 
     if ckpt_path is None:
-        print("⚠ No checkpoint found, using random weights (latency only)")
+        print(" No checkpoint found, using random weights (latency only)")
         return model
 
     print(f"Loading checkpoint: {ckpt_path}")
@@ -136,7 +136,7 @@ def load_teacher(device: str):
         model.load_state_dict(state["model_state_dict"])
     else:
         model.load_state_dict(state)
-    print("✓ Teacher weights loaded")
+    print(" Teacher weights loaded")
     return model
 
 
@@ -180,7 +180,7 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}\n")
     if device == "cpu":
-        print("⚠ GPU not available; FP16 will behave like FP32 on CPU")
+        print(" GPU not available; FP16 will behave like FP32 on CPU")
 
     model = load_teacher(device)
     # Latency

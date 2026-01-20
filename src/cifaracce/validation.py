@@ -24,8 +24,8 @@ from cifaracce.bench import WARM_UP_ITERS, MEASURE_ITERS, benchmark_latency, exa
 # 2. Runs 3 consecutive benchmarks of the same model
 # 3. Validates stability:
 #    - Calculates the coefficient of variation (CV) between the 3 runs
-#    - If CV < 20%: ✓ Reliable measurements
-#    - If CV ≥ 20%: ⚠️ Noise/instability present
+#    - If CV < 20%:  Reliable measurements
+#    - If CV ≥ 20%: ️ Noise/instability present
 # 4. Shows summary with results and statistics
 #
 # Objective: Ensure your measurements are reproducible and not affected

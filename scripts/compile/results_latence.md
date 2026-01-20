@@ -2,7 +2,7 @@
 Using device: cuda
 
 Loading checkpoint: checkpoints/mobilenetv3/mobilenetv3_best.pt
-✓ Weights loaded
+ Weights loaded
 
 == Baseline (uncompiled) ==
 

@@ -87,7 +87,7 @@ def main():
     print(f"Using device: {device}\n")
     
     if device == "cpu":
-        print("⚠ Warning: GPU not available, using CPU (latency measurements will be slower)")
+        print(" Warning: GPU not available, using CPU (latency measurements will be slower)")
     
     # Load checkpoint
     checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_cifar_best.pth"
@@ -95,7 +95,7 @@ def main():
         checkpoint_path = cfg.CHECKPOINTS['resnet18_dir'] / "resnet18_best.pt"
     
     if not checkpoint_path.exists():
-        print(f"✗ Checkpoint not found")
+        print(f" Checkpoint not found")
         return
     
     print(f"Loading checkpoint: {checkpoint_path}")
@@ -108,7 +108,7 @@ def main():
     else:
         model.load_state_dict(checkpoint)
     
-    print("✓ Model loaded\n")
+    print(" Model loaded\n")
     
     print("=" * 60)
     print("J3-10 | Benchmark Latence GPU ResNet-18 (FP32)")

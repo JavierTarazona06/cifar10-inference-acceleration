@@ -112,7 +112,7 @@ def main():
         ]
         print(tabulate(checkpoint_results, headers=["Metric", "Value"], tablefmt="grid"))
     else:
-        print("⚠ Checkpoint not found yet")
+        print(" Checkpoint not found yet")
     
     print("\n4. SUMMARY")
     print("-" * 60)

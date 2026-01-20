@@ -2,7 +2,7 @@
 Using device: cuda
 
 Loading checkpoint: checkpoints\mobilenetv3\mobilenetv3_best.pt
-✓ Model weights loaded
+ Model weights loaded
 
 == MobileNetV3-Small | FP32 benchmark ==
 
@@ -66,7 +66,7 @@ LATENCY STATISTICS (batch=1, FP16)
 Using device: cuda
 
 Loading checkpoint: checkpoints\mobilenetv3\mobilenetv3_best.pt
-✓ Weights loaded
+ Weights loaded
 C:\Users\javit\Documents\ENSTA\Module 2\Apprentissage Automatique\cifar10-inference-acceleration\scripts\fp16\eval_accuracy_fp16_mobilenetv3.py:38: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
   with torch.cuda.amp.autocast(dtype=torch.float16):
 

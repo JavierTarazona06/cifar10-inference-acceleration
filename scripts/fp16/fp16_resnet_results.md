@@ -2,7 +2,7 @@
 Using device: cuda
 
 Loading checkpoint: checkpoints\resnet18\resnet18_best.pt
-✓ Teacher weights loaded
+ Teacher weights loaded
 
 == ResNet-18 | FP32 benchmark ==
 
