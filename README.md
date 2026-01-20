@@ -7,6 +7,97 @@ Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 - **Data constraint:** training uses **only CIFAR-10 train** (augmentations allowed). No external data or external pretraining.
 - **Reporting:** at least **mean latency** and **p95 latency** for each variant; track accuracy and (optionally) model size / params.
 
+# Installation and Execution
+
+## Prerequisites
+- Python 3.10 or higher
+- NVIDIA GPU with CUDA 12.1 support
+- pip or conda package manager
+
+## Installation Instructions
+
+### For Linux and Windows
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/JavierTarazona06/cifar10-inference-acceleration.git
+   cd cifar10-inference-acceleration
+   ```
+
+2. **Create a virtual environment:**
+
+   **Linux:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   ```
+
+   **Windows (Command Prompt):**
+   ```cmd
+   python -m venv venv
+   venv\Scripts\activate.bat
+   ```
+
+3. **Install PyTorch with CUDA 12.1 support:**
+   ```bash
+   pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+   ```
+
+4. **Install remaining dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. **Install the package in development mode:**
+   ```bash
+   pip install -e .
+   ```
+
+## Running Scripts
+
+To execute any training, evaluation, or benchmarking script, use:
+
+```bash
+python scripts/<path_to_script>/<script_name>.py [arguments]
+```
+
+### Examples:
+
+- Train MobileNetV3-Small (J2):
+  ```bash
+  python scripts/mobilenet_j2/train_mobilenet_j2.py
+  ```
+
+- Evaluate ResNet-18 (J3):
+  ```bash
+  python scripts/resnet_j3/evaluate_resnet18.py
+  ```
+
+- Benchmark latency (J4):
+  ```bash
+  python scripts/distillation/eval_latency_distil.py
+  ```
+
+- Run FP16 evaluation:
+  ```bash
+  python scripts/fp16/eval_latency_mobilenetv3.py
+  ```
+
+- Run torch.compile benchmark:
+  ```bash
+  python scripts/compile/benchmark_compile_mobilenetv3.py
+  ```
+
+For detailed arguments and options, see individual script files or run:
+```bash
+python scripts/<path_to_script>/<script_name>.py --help
+```
 
 ## Repository structure (suggested)
 .
