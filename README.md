@@ -1,7 +1,7 @@
 # CIFAR-10 — GPU Inference Acceleration (batch=1)
 Optimize GPU inference latency for CIFAR-10 while keeping strong accuracy.
 
-## Project goals (requirements)
+## Project goals
 - **Accuracy:** reach **≥ 85%** on **CIFAR-10 test**.
 - **Primary metric:** **GPU inference latency** with **batch = 1**.
 - **Data constraint:** training uses **only CIFAR-10 train** (augmentations allowed). No external data or external pretraining.
@@ -99,7 +99,9 @@ For detailed arguments and options, see individual script files or run:
 python scripts/<path_to_script>/<script_name>.py --help
 ```
 
-## Repository structure (suggested)
+## Repository structure
+```
+bash
 .
 
 ├── src/
@@ -127,11 +129,7 @@ python scripts/<path_to_script>/<script_name>.py --help
 ├── checkpoints/               # saved weights (gitignored)
 
 └── README.md
-
-
-## Notes / guardrails
-- No ImageNet weights: instantiate models with `weights=None` (or equivalent) and train on CIFAR-10.
-- Keep benchmarking fair: same preprocessing, same precision mode, same GPU, same batch size, same protocol.
+```
 
 ## Deliverables
 - Training + evaluation + benchmarking code
